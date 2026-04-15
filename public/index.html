@@ -337,9 +337,9 @@
 
   <script>
     // ── Configuración ─────────────────────────────────────────────────────────
-    // URL del servidor mailer (Render/Railway) y secret compartido
-    const WORKER_URL    = "https://proveedor-mailer.onrender.com";
-    const MAILER_SECRET = "MAILER_SECRET_PLACEHOLDER";
+    // URL del Cloudflare Worker y secret compartido
+    const WORKER_URL    = "https://proveedor-mailer.santamariapablodaniel.workers.dev";
+    const MAILER_SECRET = "MAILER_SECRET_PLACEHOLDER"; // mismo valor que el secret en CF
 
     const HEADERS = MAILER_SECRET ? { "X-Mailer-Secret": MAILER_SECRET } : {};
 

@@ -1,0 +1,9 @@
+name = "proveedor-mailer"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+
+# KV Namespace para guardar el historial de contactos
+# Reemplazá el id con el que te da el dashboard de Cloudflare
+[[kv_namespaces]]
+binding = "CONTACTS"
+id = "REEMPLAZAR_CON_ID_DE_KV"
