@@ -321,7 +321,7 @@
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
         </svg>
-        <span>ventas@mercadolimpio.ar</span>
+        <span>proveedores@mercadolimpio.ar</span>
       </div>
       <button class="btn-send" id="sendBtn" onclick="sendEmail()">
         <span id="btnText">Enviar</span>
@@ -339,7 +339,7 @@
     // ── Configuración ─────────────────────────────────────────────────────────
     // URL del Cloudflare Worker y secret compartido
     const WORKER_URL    = "https://proveedor-mailer.santamariapablodaniel.workers.dev";
-    const MAILER_SECRET = "MAILER_SECRET_PLACEHOLDER"; // mismo valor que el secret en CF
+    const MAILER_SECRET = "Galamar3";
 
     const HEADERS = MAILER_SECRET ? { "X-Mailer-Secret": MAILER_SECRET } : {};
 
