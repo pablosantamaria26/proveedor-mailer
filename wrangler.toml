@@ -6,4 +6,4 @@ compatibility_date = "2024-09-23"
 # Reemplazá el id con el que te da el dashboard de Cloudflare
 [[kv_namespaces]]
 binding = "CONTACTS"
-id = "REEMPLAZAR_CON_ID_DE_KV"
+id = "64c2829e6c09450bb3a1f27b80f2ab51"
