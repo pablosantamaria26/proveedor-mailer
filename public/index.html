@@ -337,10 +337,9 @@
 
   <script>
     // ── Configuración ─────────────────────────────────────────────────────────
-    // Reemplazá con la URL real de tu worker (Render/Railway)
-    // y con el mismo valor de MAILER_SECRET que pusiste en las variables del worker
-    const WORKER_URL    = "https://TU-WORKER.onrender.com";
-    const MAILER_SECRET = "TU_MAILER_SECRET";
+    // URL del servidor mailer (Render/Railway) y secret compartido
+    const WORKER_URL    = "https://proveedor-mailer.onrender.com";
+    const MAILER_SECRET = "MAILER_SECRET_PLACEHOLDER";
 
     const HEADERS = MAILER_SECRET ? { "X-Mailer-Secret": MAILER_SECRET } : {};
 
@@ -401,7 +400,7 @@
     let allContacts = [];
     let acActive    = -1;
 
-    fetch(`${WORKER_URL}/mailer/contacts`, { headers: HEADERS })
+    fetch(`${WORKER_URL}/contacts`, { headers: HEADERS })
       .then(r => r.json())
       .then(d => { allContacts = Array.isArray(d) ? d : []; })
       .catch(() => {});
@@ -482,7 +481,7 @@
         form.append("message", message);
         selectedFiles.forEach(f => form.append("archivos", f));
 
-        const res  = await fetch(`${WORKER_URL}/mailer/send`, { method: "POST", headers: HEADERS, body: form });
+        const res  = await fetch(`${WORKER_URL}/send`, { method: "POST", headers: HEADERS, body: form });
         const json = await res.json();
 
         if (!json.ok) throw new Error(json.error || "Error desconocido");
