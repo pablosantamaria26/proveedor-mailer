@@ -1,16 +1,5 @@
 {
   "name": "proveedor-mailer",
   "version": "1.0.0",
-  "description": "App para enviar emails a proveedores con adjuntos via Resend",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch index.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "express-basic-auth": "^1.2.1",
-    "multer": "^2.1.1",
-    "resend": "^4.0.0"
-  }
+  "description": "Frontend estático para enviar emails a proveedores via el worker de Mercado Limpio"
 }
