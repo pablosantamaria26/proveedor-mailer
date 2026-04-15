@@ -77,16 +77,10 @@ async function handleSend(request, env) {
   }
 
   const FROM_NAME  = env.FROM_NAME  || "Mercado Limpio";
-  const FROM_EMAIL = env.FROM_EMAIL || "ventas@mercadolimpio.ar";
+  const FROM_EMAIL = env.FROM_EMAIL || "proveedores@mercadolimpio.ar";
   const REPLY_TO   = env.REPLY_TO   || "distribuidoramercadolimpio@gmail.com";
 
-  const htmlBody = `
-    <div style="font-family:Arial,sans-serif;font-size:15px;color:#1e293b;line-height:1.6;max-width:680px">
-      ${escHtml(message).replace(/\n/g, "<br>")}
-      <br><br>
-      <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0">
-      <p style="font-size:12px;color:#94a3b8;margin:0">${escHtml(FROM_NAME)} · Buenos Aires, Argentina</p>
-    </div>`;
+  const htmlBody = buildEmailHtml(message, subject, FROM_NAME, FROM_EMAIL, attachments);
 
   const body = {
     from:        `"${FROM_NAME}" <${FROM_EMAIL}>`,
@@ -161,4 +155,163 @@ function arrayBufferToBase64(buffer) {
     binary += String.fromCharCode(bytes[i]);
   }
   return btoa(binary);
+}
+
+// ── Template de email sofisticado ──────────────────────────────────────────
+function buildEmailHtml(message, subject, fromName, fromEmail, attachments = []) {
+  const LOGO_URL   = "https://pablosantamaria26.github.io/proveedor-mailer/logo.jpeg";
+  const date       = new Date().toLocaleDateString("es-AR", { day:"2-digit", month:"long", year:"numeric" });
+  const msgHtml    = escHtml(message).replace(/\n/g, "<br>");
+  const hasAttach  = attachments.length > 0;
+
+  const attachList = hasAttach ? `
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px">
+      <tr>
+        <td style="padding-bottom:10px;font-family:'Helvetica Neue',Arial,sans-serif;
+                   font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+                   color:#8a7a5a;border-bottom:1px solid #e8e0d0">
+          Archivos adjuntos
+        </td>
+      </tr>
+      ${attachments.map(a => `
+      <tr>
+        <td style="padding:10px 0;font-family:'Helvetica Neue',Arial,sans-serif;
+                   font-size:13px;color:#4a5568;border-bottom:1px solid #f0ede8">
+          &#128206;&nbsp;&nbsp;${escHtml(a.filename)}
+        </td>
+      </tr>`).join("")}
+    </table>` : "";
+
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>${escHtml(subject)}</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f0ede8;font-family:'Helvetica Neue',Arial,sans-serif">
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0"
+         style="background-color:#f0ede8;padding:48px 16px">
+    <tr>
+      <td align="center">
+
+        <!-- Contenedor principal -->
+        <table width="620" cellpadding="0" cellspacing="0" border="0"
+               style="max-width:620px;background-color:#ffffff;
+                      box-shadow:0 4px 32px rgba(15,27,53,0.10)">
+
+          <!-- Barra superior navy -->
+          <tr>
+            <td height="6" style="background:linear-gradient(90deg,#0f1b35 0%,#1e3a6e 100%);
+                                  font-size:0;line-height:0">&nbsp;</td>
+          </tr>
+
+          <!-- Header con logo -->
+          <tr>
+            <td align="center"
+                style="padding:44px 52px 36px;background-color:#ffffff;
+                       border-bottom:3px solid #c9a558">
+              <img src="${LOGO_URL}"
+                   alt="Mercado Limpio Distribuidora"
+                   width="210"
+                   style="display:block;border:0;max-width:210px">
+            </td>
+          </tr>
+
+          <!-- Fecha y línea de asunto -->
+          <tr>
+            <td style="padding:32px 52px 0;background-color:#ffffff">
+              <p style="margin:0 0 6px;font-size:11px;letter-spacing:2.5px;
+                        text-transform:uppercase;color:#8a7a5a;font-weight:600">
+                ${date}
+              </p>
+              <h2 style="margin:0;font-size:20px;font-weight:300;color:#0f1b35;
+                         letter-spacing:0.3px;line-height:1.35;
+                         border-bottom:1px solid #ede8e0;padding-bottom:24px">
+                ${escHtml(subject)}
+              </h2>
+            </td>
+          </tr>
+
+          <!-- Cuerpo del mensaje -->
+          <tr>
+            <td style="padding:32px 52px 40px;background-color:#ffffff">
+              <p style="margin:0;font-size:15.5px;color:#2d3748;
+                        line-height:1.85;font-weight:300">
+                ${msgHtml}
+              </p>
+              ${attachList}
+            </td>
+          </tr>
+
+          <!-- Separador dorado -->
+          <tr>
+            <td height="1" style="background-color:#c9a558;font-size:0;line-height:0">&nbsp;</td>
+          </tr>
+
+          <!-- Firma -->
+          <tr>
+            <td style="padding:32px 52px;background-color:#faf8f5">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td>
+                    <p style="margin:0 0 3px;font-size:13px;font-weight:700;
+                               color:#0f1b35;letter-spacing:0.3px">
+                      ${escHtml(fromName)}
+                    </p>
+                    <p style="margin:0 0 12px;font-size:12px;color:#8a7a5a;
+                               letter-spacing:0.5px">
+                      Distribuidora · Buenos Aires, Argentina
+                    </p>
+                    <p style="margin:0;font-size:11px;color:#a09070">
+                      ${escHtml(fromEmail)}
+                    </p>
+                  </td>
+                  <td align="right" valign="middle">
+                    <div style="width:42px;height:42px;background-color:#0f1b35;
+                                border-radius:50%;display:inline-block;
+                                text-align:center;line-height:42px">
+                      <span style="color:#c9a558;font-size:20px;font-weight:300">M</span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Barra inferior navy -->
+          <tr>
+            <td style="padding:20px 52px;background-color:#0f1b35">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td>
+                    <p style="margin:0;font-size:10px;color:#5a7ab5;
+                               letter-spacing:1px;text-transform:uppercase">
+                      Mercado Limpio Distribuidora &reg;
+                    </p>
+                    <p style="margin:4px 0 0;font-size:10px;color:#3d5a8a">
+                      Este email y sus adjuntos son confidenciales y de uso exclusivo
+                      del destinatario.
+                    </p>
+                  </td>
+                  <td align="right" valign="middle">
+                    <p style="margin:0;font-size:10px;color:#3d5a8a">
+                      &#128274;&nbsp;Comunicación segura
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+        <!-- / Contenedor -->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>`;
 }
