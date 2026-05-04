@@ -1,6 +1,6 @@
 {
   "name": "proveedor-mailer",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Mailer proveedores — Cloudflare Worker + GitHub Pages",
   "scripts": {
     "deploy": "wrangler deploy",
