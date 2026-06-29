@@ -183,31 +183,41 @@
     #view-dashboard { background: var(--bg); }
 
     .dash-header {
-      padding: 22px 28px 18px;
+      padding: 18px 20px 16px;
       background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
       flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
+    }
+    .dash-header-left {
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
     }
     .dash-header-left h1 {
-      font-size: 19px;
+      font-size: 17px;
       font-weight: 700;
       color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .dash-header-left p {
-      font-size: 12px;
+      font-size: 11px;
       color: rgba(255,255,255,.55);
       margin-top: 3px;
-      text-transform: capitalize;
     }
     .dash-refresh-btn {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
       border: 1.5px solid rgba(255,255,255,.2);
-      border-radius: 20px;
+      border-radius: 50%;
       background: rgba(255,255,255,.1);
       color: rgba(255,255,255,.8);
       font-size: 12px;
@@ -216,6 +226,7 @@
       cursor: pointer;
       transition: all .15s;
     }
+    .dash-refresh-btn span { display: none; }
     .dash-refresh-btn:hover { background: rgba(255,255,255,.2); border-color: rgba(255,255,255,.4); color: #fff; }
 
     .dash-body { flex: 1; overflow-y: auto; padding: 20px 28px 28px; }
@@ -536,11 +547,13 @@
       border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden;
     }
     .mail-pane-header {
-      padding: 14px 18px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+      padding: 16px 18px 14px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+      flex-shrink: 0;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .mail-pane-header h3 { font-size: 14px; font-weight: 700; color: var(--navy); }
-    .mail-pane-count    { font-size: 11px; color: var(--muted); }
+    .mail-pane-header h3 { font-size: 15px; font-weight: 700; color: #fff; }
+    .mail-pane-count    { font-size: 11px; color: rgba(255,255,255,.5); }
 
     .mail-filter-tabs {
       display: flex;
@@ -549,19 +562,19 @@
     }
     .mail-filter-tab {
       flex: 1;
-      padding: 8px 12px;
-      font-size: 11px;
+      padding: 9px 12px;
+      font-size: 12px;
       font-weight: 600;
       font-family: inherit;
       color: var(--muted);
-      background: none;
+      background: var(--white);
       border: none;
       border-bottom: 2px solid transparent;
       cursor: pointer;
       transition: all .14s;
       text-align: center;
     }
-    .mail-filter-tab.active { color: var(--navy); border-bottom-color: var(--navy2); }
+    .mail-filter-tab.active { color: var(--navy2); border-bottom-color: var(--navy2); }
     .mail-filter-tab:hover:not(.active) { color: var(--text); background: #f8fafc; }
 
     .mail-search-wrap { padding: 9px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
@@ -591,9 +604,28 @@
     .badge-prog { background: #e8f0fe; color: #1a56db; border: 1px solid #c5d4f8; }
     .badge-adj  { background: var(--cream); color: var(--muted); border: 1px solid var(--border); }
 
-    .mail-empty { padding: 48px 20px; text-align: center; color: var(--muted); }
-    .mail-empty svg { display: block; margin: 0 auto 14px; opacity: .3; }
-    .mail-empty p { font-size: 13px; }
+    .mail-empty {
+      padding: 60px 24px;
+      text-align: center;
+      color: var(--muted);
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .mail-empty-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 6px;
+    }
+    .mail-empty p  { font-size: 14px; font-weight: 500; color: var(--navy); }
+    .mail-empty small { font-size: 12px; color: var(--muted); }
+    .mail-empty .btn-empty-cta {
+      margin-top: 6px; padding: 10px 22px;
+      background: var(--navy); color: #fff;
+      border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: background .15s;
+    }
+    .mail-empty .btn-empty-cta:hover { background: var(--navy2); }
 
     /* Reading pane */
     .mail-reading-pane { flex: 1; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
@@ -666,11 +698,13 @@
     ══════════════════════════════════════════════ */
     .sched-view-pane { flex: 1; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
     .sched-view-top {
-      padding: 16px 24px 12px; border-bottom: 1px solid var(--border); background: var(--white); flex-shrink: 0;
+      padding: 16px 24px 14px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+      flex-shrink: 0;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .sched-view-top h3 { font-size: 15px; font-weight: 700; color: var(--navy); }
-    .sched-view-top p  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .sched-view-top h3 { font-size: 15px; font-weight: 700; color: #fff; }
+    .sched-view-top p  { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; }
 
     .sched-view-list { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
 
@@ -777,15 +811,18 @@
 
     /* Toast */
     #toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(16px);
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px);
       background: var(--navy); color: var(--white); padding: 12px 20px; border-left: 3px solid var(--gold);
-      font-size: 13px; font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,.2); opacity: 0;
-      transition: opacity .25s, transform .25s; z-index: 999; pointer-events: none; white-space: nowrap;
-      border-radius: 0 4px 4px 0;
+      font-size: 13px; font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,.25); opacity: 0;
+      transition: opacity .25s, transform .25s; z-index: 1000; pointer-events: none;
+      border-radius: 0 8px 8px 0; max-width: 340px; white-space: nowrap;
     }
     #toast.show    { opacity: 1; transform: translateX(-50%) translateY(0); }
     #toast.success { border-color: var(--success); }
     #toast.error   { border-color: var(--danger); }
+    @media (max-width: 768px) {
+      #toast { bottom: 78px; font-size: 12px; padding: 10px 16px; max-width: 300px; }
+    }
 
     /* ══════════════════════════════════════════════
        GEMINI AI PANELS
@@ -899,14 +936,14 @@
       flex: 1; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 4px;
       background: none; border: none; border-top: 2px solid transparent;
-      color: rgba(255,255,255,.35); font-size: 9px; font-weight: 700;
-      font-family: inherit; cursor: pointer; padding: 8px 4px 6px;
+      color: rgba(255,255,255,.4); font-size: 10px; font-weight: 600;
+      font-family: inherit; cursor: pointer; padding: 8px 2px 6px;
       transition: color .14s, border-color .14s;
-      min-width: 0; letter-spacing: .3px; text-transform: uppercase;
     }
     .bottom-nav-item svg { flex-shrink: 0; }
-    .bottom-nav-item span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    .bottom-nav-item span { display: block; white-space: nowrap; }
     .bottom-nav-item.active { color: var(--gold); border-top-color: var(--gold); }
+    .fab.fab-hidden { display: none !important; }
     .fab {
       display: none; position: fixed; bottom: 80px; right: 20px;
       width: 54px; height: 54px; background: var(--gold); color: var(--navy);
@@ -1061,12 +1098,11 @@
           <h1 id="dashGreeting">Bienvenido</h1>
           <p id="dashDate"></p>
         </div>
-        <button class="dash-refresh-btn" onclick="loadDashboard()">
-          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <button class="dash-refresh-btn" onclick="loadDashboard()" title="Actualizar">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
             <path stroke-linecap="round" stroke-linejoin="round"
               d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
-          Actualizar
         </button>
       </div>
       <div class="dash-body" id="dashBody">
@@ -1204,10 +1240,12 @@
         </div>
         <div class="mail-list-body" id="mailListBody">
           <div class="mail-empty">
-            <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
+            <div class="mail-empty-icon">
+              <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#4f7ef8" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
             <p>Cargando historial…</p>
           </div>
         </div>
@@ -1278,11 +1316,14 @@
         </div>
         <div class="sched-view-list" id="schedViewList">
           <div class="sched-card-empty">
-            <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <h4>No hay emails programados</h4>
-            <p>Usá el botón "Programar envío" desde Redactar</p>
+            <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#fffbeb,#fde68a);display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+              <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="#f59e0b" stroke-width="1.8">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <h4>Sin emails programados</h4>
+            <p>Usá "Programar envío" al redactar un email</p>
+            <button onclick="switchView('compose')" style="margin-top:12px;padding:10px 22px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">Redactar y programar</button>
           </div>
         </div>
       </div>
@@ -1295,31 +1336,31 @@
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bottom-nav-item active" data-view="dashboard" onclick="switchView('dashboard')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
         <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
       </svg>
       <span>Inicio</span>
     </button>
     <button class="bottom-nav-item" data-view="compose" onclick="switchView('compose')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round"
           d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
       </svg>
-      <span>Redactar</span>
+      <span>Nuevo</span>
     </button>
     <button class="bottom-nav-item" data-view="sent" onclick="switchView('sent')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round"
           d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
       </svg>
-      <span>Enviados</span>
+      <span>Buzón</span>
     </button>
     <button class="bottom-nav-item" data-view="scheduled" onclick="switchView('scheduled')">
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
       </svg>
-      <span>Prog.</span>
+      <span>Agenda</span>
     </button>
   </div>
 </nav>
@@ -1439,6 +1480,9 @@
     document.getElementById(`view-${view}`).classList.add("active");
     // Close mobile reading pane when leaving sent view
     if (view !== "sent") closeMobileReading();
+    // Hide FAB in compose (user already has ENVIAR button there)
+    const fab = document.querySelector(".fab");
+    if (fab) fab.classList.toggle("fab-hidden", view === "compose");
     if (view === "sent")      loadSentEmails();
     if (view === "scheduled") loadScheduledView();
     if (view === "dashboard") loadDashboard();
@@ -1452,9 +1496,11 @@
     if (h >= 5 && h < 12)  greet = "Buenos días";
     else if (h >= 12 && h < 19) greet = "Buenas tardes";
     document.getElementById("dashGreeting").textContent = greet + ", Mercado Limpio";
-    document.getElementById("dashDate").textContent = now.toLocaleDateString("es-AR", {
+    const fechaStr = now.toLocaleDateString("es-AR", {
       weekday: "long", day: "numeric", month: "long", year: "numeric"
     });
+    document.getElementById("dashDate").textContent =
+      fechaStr.charAt(0).toUpperCase() + fechaStr.slice(1);
   }
 
   async function loadDashboard() {
@@ -1925,7 +1971,17 @@
   function renderMailList(items) {
     const body = document.getElementById("mailListBody");
     if (!items.length) {
-      body.innerHTML = `<div class="mail-empty"><svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><p>No hay emails</p></div>`;
+      const isSinResp = currentMailFilter === 'sinresponder';
+      body.innerHTML = `<div class="mail-empty">
+        <div class="mail-empty-icon">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#4f7ef8" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <p>${isSinResp ? 'Todo respondido' : 'No hay emails aún'}</p>
+        <small>${isSinResp ? '¡Excelente seguimiento!' : 'Los emails que envíes aparecerán aquí'}</small>
+        ${!isSinResp ? `<button class="btn-empty-cta" onclick="switchView('compose')">Redactar primer email</button>` : ''}
+      </div>`;
       return;
     }
     body.innerHTML = items.map(item => {
