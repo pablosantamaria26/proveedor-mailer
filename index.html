@@ -16,11 +16,11 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:      #f4f6fb;
+      --bg:      #f0f2f8;
       --white:   #ffffff;
-      --border:  #e1e7f0;
-      --text:    #1e293b;
-      --muted:   #64748b;
+      --border:  #e2e8f4;
+      --text:    #1a2540;
+      --muted:   #6b7a9e;
       --navy:    #0f1b35;
       --navy2:   #1e3a6e;
       --gold:    #c9a558;
@@ -28,11 +28,14 @@
       --success: #22c55e;
       --warning: #f59e0b;
       --danger:  #ef4444;
-      --info:    #3b82f6;
+      --info:    #4f7ef8;
       --cream:   #f0ede8;
       --cream2:  #faf8f5;
       --sidebar-w: 240px;
-      --radius: 8px;
+      --radius: 14px;
+      --radius-sm: 10px;
+      --shadow: 0 2px 16px rgba(15,27,53,.08);
+      --shadow-md: 0 4px 28px rgba(15,27,53,.12);
     }
 
     html, body {
@@ -180,40 +183,40 @@
     #view-dashboard { background: var(--bg); }
 
     .dash-header {
-      padding: 20px 28px 16px;
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
+      padding: 22px 28px 18px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
       flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     .dash-header-left h1 {
-      font-size: 18px;
+      font-size: 19px;
       font-weight: 700;
-      color: var(--navy);
+      color: #fff;
     }
     .dash-header-left p {
       font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
+      color: rgba(255,255,255,.55);
+      margin-top: 3px;
+      text-transform: capitalize;
     }
     .dash-refresh-btn {
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 7px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 6px;
-      background: var(--white);
-      color: var(--muted);
+      padding: 8px 14px;
+      border: 1.5px solid rgba(255,255,255,.2);
+      border-radius: 20px;
+      background: rgba(255,255,255,.1);
+      color: rgba(255,255,255,.8);
       font-size: 12px;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
       transition: all .15s;
     }
-    .dash-refresh-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .dash-refresh-btn:hover { background: rgba(255,255,255,.2); border-color: rgba(255,255,255,.4); color: #fff; }
 
     .dash-body { flex: 1; overflow-y: auto; padding: 20px 28px 28px; }
 
@@ -226,15 +229,30 @@
 
     .kpi-card {
       background: var(--white);
-      border: 1px solid var(--border);
+      border: none;
       border-radius: var(--radius);
-      padding: 16px;
+      padding: 18px 16px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      transition: box-shadow .15s;
+      gap: 10px;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
     }
-    .kpi-card:hover { box-shadow: 0 2px 16px rgba(15,27,53,.07); }
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .kpi-card.c-blue::before   { background: linear-gradient(90deg,#4f7ef8,#82aaff); }
+    .kpi-card.c-green::before  { background: linear-gradient(90deg,#22c55e,#6ee7b7); }
+    .kpi-card.c-amber::before  { background: linear-gradient(90deg,#f59e0b,#fcd34d); }
+    .kpi-card.c-red::before    { background: linear-gradient(90deg,#ef4444,#fca5a5); }
+    .kpi-card.c-purple::before { background: linear-gradient(90deg,#8b5cf6,#c4b5fd); }
+    .kpi-card.c-teal::before   { background: linear-gradient(90deg,#06b6d4,#67e8f9); }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
     .kpi-top {
       display: flex;
@@ -249,12 +267,12 @@
       justify-content: center;
       flex-shrink: 0;
     }
-    .kpi-icon.blue   { background: #eff6ff; color: var(--info); }
-    .kpi-icon.green  { background: #f0fdf4; color: var(--success); }
-    .kpi-icon.amber  { background: #fffbeb; color: var(--warning); }
-    .kpi-icon.red    { background: #fef2f2; color: var(--danger); }
-    .kpi-icon.purple { background: #f5f3ff; color: #7c3aed; }
-    .kpi-icon.navy   { background: #eff3fc; color: var(--navy2); }
+    .kpi-icon.blue   { background: linear-gradient(135deg,#4f7ef8,#82aaff); color: #fff; }
+    .kpi-icon.green  { background: linear-gradient(135deg,#22c55e,#6ee7b7); color: #fff; }
+    .kpi-icon.amber  { background: linear-gradient(135deg,#f59e0b,#fcd34d); color: #fff; }
+    .kpi-icon.red    { background: linear-gradient(135deg,#ef4444,#fca5a5); color: #fff; }
+    .kpi-icon.purple { background: linear-gradient(135deg,#8b5cf6,#c4b5fd); color: #fff; }
+    .kpi-icon.navy   { background: linear-gradient(135deg,#0f1b35,#1e3a6e); color: var(--gold); }
 
     .kpi-number {
       font-size: 28px;
@@ -869,30 +887,34 @@
     ══════════════════════════════════════════════ */
     .bottom-nav {
       display: none; position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--navy); border-top: 1px solid rgba(255,255,255,.1);
-      height: 62px; z-index: 200;
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,.08);
+      height: 66px; z-index: 200;
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
     .bottom-nav-inner {
-      display: flex; height: 100%; align-items: stretch;
+      display: flex; height: 66px; align-items: stretch;
     }
     .bottom-nav-item {
       flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 3px;
+      align-items: center; justify-content: center; gap: 4px;
       background: none; border: none; border-top: 2px solid transparent;
-      color: rgba(255,255,255,.38); font-size: 10px; font-weight: 600;
-      font-family: inherit; cursor: pointer; padding: 6px 0;
+      color: rgba(255,255,255,.35); font-size: 9px; font-weight: 700;
+      font-family: inherit; cursor: pointer; padding: 8px 4px 6px;
       transition: color .14s, border-color .14s;
+      min-width: 0; letter-spacing: .3px; text-transform: uppercase;
     }
+    .bottom-nav-item svg { flex-shrink: 0; }
+    .bottom-nav-item span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
     .bottom-nav-item.active { color: var(--gold); border-top-color: var(--gold); }
     .fab {
-      display: none; position: fixed; bottom: 76px; right: 18px;
-      width: 52px; height: 52px; background: var(--gold); color: var(--navy);
-      border: none; border-radius: 50%; box-shadow: 0 4px 18px rgba(0,0,0,.28);
+      display: none; position: fixed; bottom: 80px; right: 20px;
+      width: 54px; height: 54px; background: var(--gold); color: var(--navy);
+      border: none; border-radius: 50%; box-shadow: 0 6px 20px rgba(201,165,88,.45);
       cursor: pointer; align-items: center; justify-content: center;
       z-index: 201; transition: transform .14s, box-shadow .14s;
     }
-    .fab:active { transform: scale(.91); box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+    .fab:active { transform: scale(.90); }
 
     /* Mobile back bar (reading pane) */
     .mobile-back-bar {
@@ -918,41 +940,53 @@
       .bottom-nav { display: flex; }
       .fab { display: flex; }
 
-      .app { height: calc(100dvh - 62px); }
+      /* App height: viewport minus bottom nav */
+      .app { height: calc(100dvh - 66px); height: calc(100vh - 66px); }
 
       /* Dashboard */
-      .kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-      .dash-body { padding: 12px 12px 16px; }
-      .dash-header { padding: 12px 14px 10px; }
-      .dash-header-left h1 { font-size: 15px; }
-      .kpi-number { font-size: 22px; }
-      .kpi-card { padding: 12px; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; gap: 11px; }
+      .dash-body { padding: 14px 14px 20px; }
+      .dash-header { padding: 18px 18px 16px; }
+      .dash-header-left h1 { font-size: 17px; }
+      .kpi-number { font-size: 24px; }
+      .kpi-card { padding: 14px; }
+      .kpi-icon { width: 34px; height: 34px; }
+      .kpi-trend { font-size: 10px; }
+
+      /* Hide less important table columns on mobile */
       .activity-table th:nth-child(3),
       .activity-table td:nth-child(3),
       .activity-table th:nth-child(4),
       .activity-table td:nth-child(4) { display: none; }
-      .activity-table td, .activity-table th { padding: 9px 12px; }
+      .activity-table td, .activity-table th { padding: 10px 12px; }
 
       /* Compose */
       #view-compose.active { flex-direction: column !important; }
       .compose-panel { width: 100%; border-right: none; height: 100%; overflow-y: auto; flex-shrink: 0; }
       .preview-panel { display: none !important; }
+      .compose-footer { padding: 12px 16px; }
+      .btn-send { padding: 12px 20px; font-size: 13px; }
+      .field input, .field textarea { font-size: 16px; } /* prevent zoom on iOS */
 
       /* Sent — list full screen */
       #view-sent.active { flex-direction: column !important; }
       .mail-list-pane { width: 100%; border-right: none; }
       .mail-reading-pane {
-        position: fixed; inset: 0; bottom: 62px;
+        position: fixed; top: 0; left: 0; right: 0; bottom: 66px;
         z-index: 150; background: var(--bg);
         display: none; flex-direction: column;
       }
       .mail-reading-pane.mobile-open { display: flex !important; }
       .mobile-back-bar { display: flex; }
 
+      /* Mail list items — bigger touch target */
+      .mail-item { padding: 14px 16px; }
+      .mail-item-subject { font-size: 14px; }
+
       /* Scheduled */
-      .sched-view-top { padding: 12px 14px 10px; }
-      .sched-view-list { padding: 12px 12px; }
-      .sched-card { padding: 12px 14px; gap: 10px; }
+      .sched-view-top { padding: 14px 16px 12px; }
+      .sched-view-list { padding: 12px; gap: 10px; }
+      .sched-card { padding: 14px 16px; gap: 12px; }
     }
   </style>
 </head>
@@ -1261,31 +1295,31 @@
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bottom-nav-item active" data-view="dashboard" onclick="switchView('dashboard')">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
       </svg>
-      Inicio
+      <span>Inicio</span>
     </button>
     <button class="bottom-nav-item" data-view="compose" onclick="switchView('compose')">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round"
           d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
       </svg>
-      Redactar
+      <span>Redactar</span>
     </button>
     <button class="bottom-nav-item" data-view="sent" onclick="switchView('sent')">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round"
           d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
       </svg>
-      Enviados
+      <span>Enviados</span>
     </button>
     <button class="bottom-nav-item" data-view="scheduled" onclick="switchView('scheduled')">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
       </svg>
-      Programados
+      <span>Prog.</span>
     </button>
   </div>
 </nav>
@@ -1450,7 +1484,7 @@
     body.innerHTML = `
       <div class="kpi-grid">
 
-        <div class="kpi-card">
+        <div class="kpi-card c-blue">
           <div class="kpi-top">
             <div>
               <div class="kpi-number">${k.total}</div>
@@ -1465,7 +1499,7 @@
           <div class="kpi-trend">Esta semana: <strong>${k.semana}</strong> · Este mes: <strong>${k.mes}</strong></div>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card c-teal">
           <div class="kpi-top">
             <div>
               <div class="kpi-number">${k.semana}</div>
@@ -1480,7 +1514,7 @@
           <div class="kpi-trend">${semArrow}</div>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card c-green">
           <div class="kpi-top">
             <div>
               <div class="kpi-number">${k.respondidos}</div>
@@ -1495,10 +1529,10 @@
           <div class="kpi-trend">${pct}% del total de emails enviados</div>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card c-amber">
           <div class="kpi-top">
             <div>
-              <div class="kpi-number" style="${k.sinResponder > 0 ? 'color:var(--warning)' : ''}">${k.sinResponder}</div>
+              <div class="kpi-number">${k.sinResponder}</div>
               <div class="kpi-label">Sin respuesta</div>
             </div>
             <div class="kpi-icon amber">
@@ -1510,7 +1544,7 @@
           <div class="kpi-trend">${k.sinResponder > 0 ? `<span class="warn">Pendientes de seguimiento</span>` : `<span style="color:var(--success)">Todo respondido</span>`}</div>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card c-purple">
           <div class="kpi-top">
             <div>
               <div class="kpi-number">${k.adjuntos}</div>
@@ -1525,13 +1559,13 @@
           <div class="kpi-trend">${k.total > 0 ? Math.round((k.adjuntos/k.total)*100) : 0}% de los emails incluyen archivos</div>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card c-red">
           <div class="kpi-top">
             <div>
-              <div class="kpi-number" style="${k.programados > 0 ? 'color:var(--info)' : ''}">${k.programados}</div>
+              <div class="kpi-number">${k.programados}</div>
               <div class="kpi-label">Programados</div>
             </div>
-            <div class="kpi-icon blue">
+            <div class="kpi-icon red">
               <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
               </svg>
