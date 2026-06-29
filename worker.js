@@ -33,6 +33,14 @@ export default {
       const id = url.pathname.slice("/scheduled/".length);
       return handleCancelScheduled(id, env);
     }
+    if (request.method === "GET"  && url.pathname === "/dashboard")    return handleDashboard(request, env);
+    if (request.method === "PATCH" && url.pathname.startsWith("/historial/")) {
+      const id = url.pathname.slice("/historial/".length);
+      return handleToggleRespondido(id, env);
+    }
+    if (request.method === "POST" && url.pathname === "/webhook/resend") return handleResendWebhook(request, env);
+    if (request.method === "POST" && url.pathname === "/gemini/sugerir-respuesta") return handleGeminiSugerirRespuesta(request, env);
+    if (request.method === "POST" && url.pathname === "/gemini/redactar") return handleGeminiRedactar(request, env);
 
     return new Response("Not found", { status: 404 });
   },
@@ -316,6 +324,8 @@ async function saveEmailToSupabase(data, env) {
     resend_id:     data.resendId || null,
     tipo:          data.tipo || "inmediato",
     enviado_at:    new Date().toISOString(),
+    tiene_adjuntos: attachments.length > 0,
+    estado_entrega: 'enviado',
   };
 
   const res = await fetch(`${env.SUPABASE_URL}/rest/v1/emails_enviados`, {
@@ -352,7 +362,7 @@ async function handleHistorial(request, env) {
     const limit  = Math.min(parseInt(url.searchParams.get("limit")  || "100"), 500);
     const offset = parseInt(url.searchParams.get("offset") || "0");
     supaUrl = `${env.SUPABASE_URL}/rest/v1/emails_enviados`
-            + `?select=id,destinatarios,asunto,tipo,enviado_at,resend_id,adjuntos_meta`
+            + `?select=id,destinatarios,asunto,tipo,enviado_at,resend_id,adjuntos_meta,respondido,tiene_adjuntos,estado_entrega`
             + `&order=enviado_at.desc&limit=${limit}&offset=${offset}`;
   }
 
@@ -373,6 +383,179 @@ async function handleHistorial(request, env) {
   return id
     ? json({ ok: true, email: data[0] || null })
     : json({ ok: true, emails: data });
+}
+
+// ─────────────────────────────────────────────────────────────────
+// DASHBOARD: KPIs agregados desde Supabase
+// ─────────────────────────────────────────────────────────────────
+async function handleDashboard(request, env) {
+  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY)
+    return json({ ok: false, error: "Supabase no configurado" }, 503);
+
+  const hdr = {
+    'apikey': env.SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${env.SUPABASE_ANON_KEY}`,
+    'Prefer': 'count=exact',
+  };
+  const base = `${env.SUPABASE_URL}/rest/v1/emails_enviados`;
+  const weekAgo  = new Date(Date.now() - 7  * 86400000).toISOString();
+  const monthAgo = new Date(Date.now() - 30 * 86400000).toISOString();
+  const prevWeekStart = new Date(Date.now() - 14 * 86400000).toISOString();
+
+  const cnt = r => { const cr = r.headers.get('content-range'); return cr ? (parseInt(cr.split('/')[1]) || 0) : 0; };
+
+  const [rTotal, rSemana, rPrevSemana, rMes, rRespondidos, rAdjuntos, rRecientes] = await Promise.all([
+    fetch(`${base}?select=id`, { method: 'HEAD', headers: hdr }),
+    fetch(`${base}?select=id&enviado_at=gte.${weekAgo}`, { method: 'HEAD', headers: hdr }),
+    fetch(`${base}?select=id&enviado_at=gte.${prevWeekStart}&enviado_at=lt.${weekAgo}`, { method: 'HEAD', headers: hdr }),
+    fetch(`${base}?select=id&enviado_at=gte.${monthAgo}`, { method: 'HEAD', headers: hdr }),
+    fetch(`${base}?select=id&respondido=eq.true`, { method: 'HEAD', headers: hdr }),
+    fetch(`${base}?select=id&tiene_adjuntos=eq.true`, { method: 'HEAD', headers: hdr }),
+    fetch(`${base}?select=id,destinatarios,asunto,tipo,enviado_at,respondido,tiene_adjuntos,estado_entrega&order=enviado_at.desc&limit=8`, {
+      headers: { 'apikey': env.SUPABASE_ANON_KEY, 'Authorization': `Bearer ${env.SUPABASE_ANON_KEY}`, 'Accept': 'application/json' }
+    }),
+  ]);
+
+  const scheduled = await getScheduledIndex(env);
+  const schedCount = scheduled.filter(e => e.status === 'pending').length;
+  const recientes  = await rRecientes.json();
+  const total      = cnt(rTotal);
+  const respondidos= cnt(rRespondidos);
+  const semana     = cnt(rSemana);
+  const prevSemana = cnt(rPrevSemana);
+
+  return json({
+    ok: true,
+    kpis: {
+      total, semana, prevSemana, mes: cnt(rMes),
+      respondidos, sinResponder: total - respondidos,
+      adjuntos: cnt(rAdjuntos), programados: schedCount,
+    },
+    recientes: Array.isArray(recientes) ? recientes : [],
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────
+// TOGGLE RESPONDIDO
+// ─────────────────────────────────────────────────────────────────
+async function handleToggleRespondido(id, env) {
+  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY)
+    return json({ ok: false, error: "Supabase no configurado" }, 503);
+  if (!id) return json({ ok: false, error: "ID requerido" }, 400);
+
+  const hdr = { 'apikey': env.SUPABASE_ANON_KEY, 'Authorization': `Bearer ${env.SUPABASE_ANON_KEY}`, 'Accept': 'application/json' };
+  const getRes = await fetch(`${env.SUPABASE_URL}/rest/v1/emails_enviados?id=eq.${encodeURIComponent(id)}&select=respondido`, { headers: hdr });
+  const [cur] = await getRes.json();
+  if (!cur) return json({ ok: false, error: "No encontrado" }, 404);
+
+  const newState = !cur.respondido;
+  const upd = await fetch(`${env.SUPABASE_URL}/rest/v1/emails_enviados?id=eq.${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    headers: { ...hdr, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ respondido: newState, respondido_at: newState ? new Date().toISOString() : null })
+  });
+
+  if (!upd.ok) { const t = await upd.text(); return json({ ok: false, error: t }, upd.status); }
+  return json({ ok: true, respondido: newState });
+}
+
+// ─────────────────────────────────────────────────────────────────
+// WEBHOOK RESEND: estado de entrega
+// ─────────────────────────────────────────────────────────────────
+async function handleResendWebhook(request, env) {
+  const payload = await request.json().catch(() => null);
+  if (!payload?.type || !payload?.data?.email_id) return json({ ok: true });
+
+  const map = { 'email.delivered': 'entregado', 'email.bounced': 'rebotado', 'email.spam_complaint': 'spam' };
+  const estado_entrega = map[payload.type];
+  if (!estado_entrega) return json({ ok: true });
+
+  if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
+    await fetch(`${env.SUPABASE_URL}/rest/v1/emails_enviados?resend_id=eq.${encodeURIComponent(payload.data.email_id)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'apikey': env.SUPABASE_ANON_KEY, 'Authorization': `Bearer ${env.SUPABASE_ANON_KEY}`, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ estado_entrega })
+    }).catch(() => {});
+  }
+  return json({ ok: true });
+}
+
+// ─────────────────────────────────────────────────────────────────
+// GEMINI AI — Sugerir respuesta
+// ─────────────────────────────────────────────────────────────────
+async function handleGeminiSugerirRespuesta(request, env) {
+  if (!env.GEMINI_API_KEY)
+    return json({ ok: false, error: "Gemini no configurado" }, 503);
+
+  let body;
+  try { body = await request.json(); } catch { return json({ ok: false, error: "JSON inválido" }, 400); }
+
+  const { asunto, mensaje_texto, destinatario } = body || {};
+  if (!asunto || !mensaje_texto)
+    return json({ ok: false, error: "Faltan asunto y mensaje_texto" }, 400);
+
+  const prompt = `Sos un asistente de una empresa distribuidora argentina llamada Mercado Limpio. Analizá el email recibido y sugerí una respuesta profesional, breve y clara, en español argentino de registro formal-comercial. Solo devolvé el cuerpo del email de respuesta, sin saludos iniciales ni firmas.\n\nAsunto: ${asunto}\nDestinatario: ${destinatario || 'proveedor'}\nMensaje:\n${mensaje_texto}`;
+
+  const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${env.GEMINI_API_KEY}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 800 }
+    })
+  });
+
+  if (!geminiRes.ok) {
+    const t = await geminiRes.text();
+    return json({ ok: false, error: `Gemini ${geminiRes.status}: ${t}` }, geminiRes.status);
+  }
+
+  const geminiData = await geminiRes.json();
+  const sugerencia = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  return json({ ok: true, sugerencia: sugerencia.trim(), asunto_respuesta: `Re: ${asunto}` });
+}
+
+// ─────────────────────────────────────────────────────────────────
+// GEMINI AI — Redactar desde intención
+// ─────────────────────────────────────────────────────────────────
+async function handleGeminiRedactar(request, env) {
+  if (!env.GEMINI_API_KEY)
+    return json({ ok: false, error: "Gemini no configurado" }, 503);
+
+  let body;
+  try { body = await request.json(); } catch { return json({ ok: false, error: "JSON inválido" }, 400); }
+
+  const { intencion, destinatario, asunto } = body || {};
+  if (!intencion)
+    return json({ ok: false, error: "Falta intencion" }, 400);
+
+  const prompt = `Sos redactor de emails para Mercado Limpio, empresa distribuidora argentina. El usuario te describe lo que quiere comunicar. Redactá un email profesional en español argentino, formal-comercial. Devolvé un JSON válido con exactamente estos dos campos: "asunto" (string) y "cuerpo" (string con solo el cuerpo del mensaje, sin saludos iniciales ni firmas). No incluyas ningún texto fuera del JSON.\n\nIntención: ${intencion}${destinatario ? `\nDestinatario: ${destinatario}` : ''}${asunto ? `\nAsunto sugerido: ${asunto}` : ''}`;
+
+  const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${env.GEMINI_API_KEY}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 800 }
+    })
+  });
+
+  if (!geminiRes.ok) {
+    const t = await geminiRes.text();
+    return json({ ok: false, error: `Gemini ${geminiRes.status}: ${t}` }, geminiRes.status);
+  }
+
+  const geminiData = await geminiRes.json();
+  let rawText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+  // Extract JSON from the response
+  const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) return json({ ok: false, error: "Gemini no devolvió JSON válido" }, 500);
+
+  let parsed;
+  try { parsed = JSON.parse(jsonMatch[0]); } catch { return json({ ok: false, error: "Error al parsear respuesta de Gemini" }, 500); }
+
+  return json({ ok: true, cuerpo: (parsed.cuerpo || "").trim(), asunto: (parsed.asunto || asunto || "").trim() });
 }
 
 // ─────────────────────────────────────────────────────────────────

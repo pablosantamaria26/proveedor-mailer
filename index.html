@@ -16,63 +16,92 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --navy:   #0f1b35;
-      --navy2:  #1e3a6e;
-      --gold:   #c9a558;
-      --gold2:  #a8883c;
-      --cream:  #f0ede8;
-      --cream2: #faf8f5;
-      --border: #e8e0d0;
-      --text:   #2d3748;
-      --muted:  #8a7a5a;
-      --white:  #ffffff;
-      --radius: 4px;
-      --sidebar-w: 210px;
+      --bg:      #f4f6fb;
+      --white:   #ffffff;
+      --border:  #e1e7f0;
+      --text:    #1e293b;
+      --muted:   #64748b;
+      --navy:    #0f1b35;
+      --navy2:   #1e3a6e;
+      --gold:    #c9a558;
+      --gold2:   #a8883c;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger:  #ef4444;
+      --info:    #3b82f6;
+      --cream:   #f0ede8;
+      --cream2:  #faf8f5;
+      --sidebar-w: 240px;
+      --radius: 8px;
     }
 
-    html, body { height: 100%; background: var(--cream); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--text); overflow: hidden; }
-
-    .app { display: flex; flex-direction: column; height: 100vh; }
-
-    /* ── Topbar ── */
-    .topbar {
-      background: var(--navy);
-      height: 52px;
-      padding: 0 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-      border-bottom: 2px solid var(--gold);
-      z-index: 20;
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      overflow: hidden;
     }
-    .topbar-brand { display: flex; align-items: center; gap: 12px; }
-    .topbar-logo  { height: 30px; filter: brightness(0) invert(1); opacity: .9; }
-    .topbar-divider { width: 1px; height: 20px; background: rgba(255,255,255,.15); }
-    .topbar-title { font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); }
-    .topbar-right { display: flex; align-items: center; gap: 10px; }
-    .topbar-meta  { font-size: 11px; color: rgba(255,255,255,.3); }
 
-    /* ── Workspace ── */
-    .workspace { display: flex; flex: 1; overflow: hidden; }
+    .app { display: flex; height: 100vh; overflow: hidden; }
 
-    /* ── Sidebar ── */
+    /* ══════════════════════════════════════════════
+       SIDEBAR
+    ══════════════════════════════════════════════ */
     .sidebar {
       width: var(--sidebar-w);
       flex-shrink: 0;
       background: var(--navy);
-      border-right: 1px solid rgba(255,255,255,.07);
       display: flex;
       flex-direction: column;
+      overflow: hidden;
+      z-index: 10;
     }
 
-    .sidebar-section {
+    .sidebar-logo-wrap {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-logo {
+      max-width: 160px;
+      max-height: 52px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: .92;
+    }
+
+    .sidebar-new-btn {
+      margin: 14px 16px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 16px;
+      background: var(--gold);
+      color: var(--navy);
+      border: none;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      letter-spacing: .3px;
+    }
+    .sidebar-new-btn:hover { background: var(--gold2); color: var(--white); }
+    .sidebar-new-btn:active { transform: scale(.97); }
+
+    .nav-section {
       font-size: 9px;
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: rgba(255,255,255,.22);
-      padding: 18px 18px 6px;
+      padding: 14px 18px 5px;
     }
 
     .nav-item {
@@ -93,16 +122,13 @@
       border-left: 3px solid transparent;
       position: relative;
     }
-
     .nav-item:hover { color: rgba(255,255,255,.82); background: rgba(255,255,255,.05); }
-
     .nav-item.active {
       color: var(--white);
       background: rgba(201,165,88,.13);
       border-left-color: var(--gold);
       padding-left: 15px;
     }
-
     .nav-badge {
       margin-left: auto;
       background: var(--gold);
@@ -117,7 +143,6 @@
       display: none;
     }
     .nav-badge.visible { display: inline-block; }
-
     .nav-divider { height: 1px; background: rgba(255,255,255,.07); margin: 6px 0; }
 
     .sidebar-footer {
@@ -125,7 +150,6 @@
       padding: 14px 18px;
       border-top: 1px solid rgba(255,255,255,.07);
     }
-
     .sidebar-from {
       display: flex;
       align-items: center;
@@ -133,19 +157,229 @@
       font-size: 11px;
       color: rgba(255,255,255,.28);
     }
+    .sidebar-dot {
+      width: 6px; height: 6px;
+      background: var(--success);
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
 
-    .sidebar-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; flex-shrink: 0; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
-
-    /* ── Main content ── */
+    /* ══════════════════════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════════════════════ */
     .main-content { flex: 1; overflow: hidden; display: flex; }
 
-    .view { display: none; flex: 1; overflow: hidden; }
+    .view { display: none; flex: 1; overflow: hidden; flex-direction: column; }
     .view.active { display: flex; }
+
+    /* ══════════════════════════════════════════════
+       DASHBOARD VIEW
+    ══════════════════════════════════════════════ */
+    #view-dashboard { background: var(--bg); }
+
+    .dash-header {
+      padding: 20px 28px 16px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .dash-header-left h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .dash-header-left p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .dash-refresh-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      background: var(--white);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .dash-refresh-btn:hover { border-color: var(--navy); color: var(--navy); }
+
+    .dash-body { flex: 1; overflow-y: auto; padding: 20px 28px 28px; }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: box-shadow .15s;
+    }
+    .kpi-card:hover { box-shadow: 0 2px 16px rgba(15,27,53,.07); }
+
+    .kpi-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .kpi-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .kpi-icon.blue   { background: #eff6ff; color: var(--info); }
+    .kpi-icon.green  { background: #f0fdf4; color: var(--success); }
+    .kpi-icon.amber  { background: #fffbeb; color: var(--warning); }
+    .kpi-icon.red    { background: #fef2f2; color: var(--danger); }
+    .kpi-icon.purple { background: #f5f3ff; color: #7c3aed; }
+    .kpi-icon.navy   { background: #eff3fc; color: var(--navy2); }
+
+    .kpi-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1;
+    }
+    .kpi-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .kpi-trend {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .kpi-trend .up   { color: var(--success); font-weight: 700; }
+    .kpi-trend .down { color: var(--danger);  font-weight: 700; }
+    .kpi-trend .warn { color: var(--warning); font-weight: 700; }
+
+    /* Activity table */
+    .activity-section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .activity-section-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .activity-section-header h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .activity-section-header span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .activity-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .activity-table th {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 10px 18px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+    }
+    .activity-row {
+      cursor: pointer;
+      transition: background .12s;
+    }
+    .activity-row:hover { background: #f8fafc; }
+    .activity-row td {
+      padding: 11px 18px;
+      font-size: 13px;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .activity-row:last-child td { border-bottom: none; }
+
+    /* Delivery badges */
+    .delivery-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .delivery-badge.delivered  { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    .delivery-badge.bounced    { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .delivery-badge.sent       { background: #f1f5f9; color: var(--muted); border: 1px solid var(--border); }
+    .delivery-badge.spam       { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+
+    .reply-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .reply-badge.replied  { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    .reply-badge.pending  { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+
+    .dash-loading {
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .dash-loading .spin-icon {
+      width: 24px; height: 24px;
+      border: 2px solid var(--border);
+      border-top-color: var(--navy2);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ══════════════════════════════════════════════
        COMPOSE VIEW
     ══════════════════════════════════════════════ */
+    #view-compose { flex-direction: row !important; }
+
     .compose-panel {
       width: 400px;
       flex-shrink: 0;
@@ -156,8 +390,11 @@
       overflow-y: auto;
     }
 
-    .compose-header { padding: 20px 24px 14px; border-bottom: 1px solid var(--border); }
-    .compose-header h2 { font-size: 14px; font-weight: 600; color: var(--navy); }
+    .compose-header {
+      padding: 20px 24px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .compose-header h2 { font-size: 14px; font-weight: 700; color: var(--navy); }
     .compose-header p  { font-size: 12px; color: var(--muted); margin-top: 3px; }
 
     .field {
@@ -168,17 +405,14 @@
       gap: 10px;
       position: relative;
     }
-
     .field label {
       font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
       color: var(--muted); padding-top: 14px; width: 52px; flex-shrink: 0;
     }
-
     .field input, .field textarea {
       flex: 1; border: none; outline: none; font-size: 13.5px; color: var(--navy);
       background: transparent; font-family: inherit; padding: 13px 0; line-height: 1.5;
     }
-
     .field textarea { resize: none; min-height: 200px; }
     .field input::placeholder, .field textarea::placeholder { color: #c0b89e; }
 
@@ -196,7 +430,7 @@
     .attach-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
     .attach-btn {
       display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px;
-      border: 1.5px dashed var(--border); border-radius: var(--radius); font-size: 12px;
+      border: 1.5px dashed var(--border); border-radius: 6px; font-size: 12px;
       font-weight: 600; color: var(--muted); cursor: pointer; transition: all .15s;
     }
     .attach-btn:hover { border-color: var(--gold); color: var(--gold2); background: #fdf9f0; }
@@ -205,7 +439,7 @@
     .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
     .chip {
       display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 8px;
-      background: var(--cream2); border: 1px solid var(--border); border-radius: 3px;
+      background: var(--cream2); border: 1px solid var(--border); border-radius: 4px;
       font-size: 11px; color: var(--navy); max-width: 200px;
     }
     .chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -224,7 +458,7 @@
     .btn-send {
       display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
       background: var(--navy); color: var(--white); border: none;
-      border-radius: var(--radius) 0 0 var(--radius); font-size: 12px; font-weight: 700;
+      border-radius: 6px 0 0 6px; font-size: 12px; font-weight: 700;
       letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: background .15s, transform .1s;
     }
     .btn-send:hover:not(:disabled) { background: var(--navy2); }
@@ -238,23 +472,22 @@
       border-top-color: var(--gold); border-radius: 50%;
       animation: spin .7s linear infinite; display: none;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
     .btn-arrow {
       display: flex; align-items: center; justify-content: center; padding: 0 10px;
       background: var(--navy); color: var(--white); border: none;
       border-left: 1px solid rgba(255,255,255,.18);
-      border-radius: 0 var(--radius) var(--radius) 0; cursor: pointer; transition: background .15s;
+      border-radius: 0 6px 6px 0; cursor: pointer; transition: background .15s;
     }
     .btn-arrow:hover { background: var(--navy2); }
 
     .sched-dropdown {
       position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--white);
-      border: 1px solid var(--border); border-radius: 7px; box-shadow: 0 8px 32px rgba(15,27,53,.16);
+      border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 32px rgba(15,27,53,.16);
       min-width: 200px; z-index: 300; overflow: hidden; display: none; animation: dropUp .14s ease;
     }
     .sched-dropdown.open { display: block; }
-    @keyframes dropUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes dropUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 
     .dropdown-item {
       padding: 11px 16px; font-size: 13px; color: var(--text); cursor: pointer;
@@ -263,16 +496,14 @@
     }
     .dropdown-item:hover { background: var(--cream2); }
 
-    .preview-panel { flex: 1; display: flex; flex-direction: column; background: var(--cream); overflow: hidden; }
-
+    .preview-panel { flex: 1; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
     .preview-header {
       padding: 13px 24px; display: flex; align-items: center; gap: 10px;
-      border-bottom: 1px solid var(--border); background: var(--cream2); flex-shrink: 0;
+      border-bottom: 1px solid var(--border); background: var(--white); flex-shrink: 0;
     }
     .preview-header span { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
-    .live-dot   { width: 7px; height: 7px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; margin-left: auto; }
-    .live-label { font-size: 10px; color: #22c55e; letter-spacing: 1.5px; text-transform: uppercase; }
-
+    .live-dot   { width: 7px; height: 7px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite; margin-left: auto; }
+    .live-label { font-size: 10px; color: var(--success); letter-spacing: 1.5px; text-transform: uppercase; }
     .preview-frame-wrap { flex: 1; padding: 20px; overflow-y: auto; }
     .preview-shadow { max-width: 620px; margin: 0 auto; box-shadow: 0 8px 40px rgba(15,27,53,.15); border-radius: 2px; overflow: hidden; }
     #previewFrame { width: 100%; border: none; display: block; min-height: 500px; }
@@ -280,23 +511,46 @@
     /* ══════════════════════════════════════════════
        SENT VIEW
     ══════════════════════════════════════════════ */
+    #view-sent { flex-direction: row !important; }
+
     .mail-list-pane {
       width: 320px; flex-shrink: 0; background: var(--white);
       border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden;
     }
-
     .mail-pane-header {
       padding: 14px 18px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0;
       display: flex; align-items: center; justify-content: space-between;
     }
     .mail-pane-header h3 { font-size: 14px; font-weight: 700; color: var(--navy); }
-    .mail-pane-count { font-size: 11px; color: var(--muted); }
+    .mail-pane-count    { font-size: 11px; color: var(--muted); }
+
+    .mail-filter-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .mail-filter-tab {
+      flex: 1;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all .14s;
+      text-align: center;
+    }
+    .mail-filter-tab.active { color: var(--navy); border-bottom-color: var(--navy2); }
+    .mail-filter-tab:hover:not(.active) { color: var(--text); background: #f8fafc; }
 
     .mail-search-wrap { padding: 9px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .mail-search-input {
       width: 100%; padding: 7px 12px; border: 1.5px solid var(--border);
-      border-radius: var(--radius); font-size: 12px; color: var(--navy); font-family: inherit;
-      background: var(--cream2); outline: none; transition: border-color .15s;
+      border-radius: 6px; font-size: 12px; color: var(--navy); font-family: inherit;
+      background: #f8fafc; outline: none; transition: border-color .15s;
     }
     .mail-search-input:focus { border-color: var(--navy2); background: var(--white); }
 
@@ -306,7 +560,7 @@
       padding: 11px 16px; border-bottom: 1px solid var(--border);
       cursor: pointer; transition: background .12s; border-left: 3px solid transparent;
     }
-    .mail-item:hover { background: var(--cream2); }
+    .mail-item:hover { background: #f8fafc; }
     .mail-item.selected { background: #eef2fb; border-left-color: var(--navy2); padding-left: 13px; }
     .mail-item:last-child { border-bottom: none; }
 
@@ -324,8 +578,7 @@
     .mail-empty p { font-size: 13px; }
 
     /* Reading pane */
-    .mail-reading-pane { flex: 1; display: flex; flex-direction: column; background: var(--cream); overflow: hidden; }
-
+    .mail-reading-pane { flex: 1; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
     .reading-empty {
       flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
       color: var(--muted); text-align: center; padding: 24px;
@@ -334,16 +587,38 @@
     .reading-empty p   { font-size: 14px; font-weight: 300; }
 
     .reading-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-
     .reading-header {
       padding: 16px 24px 14px; border-bottom: 1px solid var(--border);
       background: var(--white); flex-shrink: 0;
     }
     .reading-subject { font-size: 17px; font-weight: 300; color: var(--navy); margin-bottom: 10px; line-height: 1.35; }
-    .reading-meta    { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+    .reading-meta    { display: flex; flex-wrap: wrap; gap: 4px 20px; margin-bottom: 12px; }
     .reading-meta-row { display: flex; gap: 7px; font-size: 12px; }
     .reading-meta-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); padding-top: 1px; }
     .reading-meta-val   { color: var(--text); }
+
+    .btn-respondido {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .15s;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--muted);
+    }
+    .btn-respondido:hover { border-color: var(--success); color: #16a34a; background: #f0fdf4; }
+    .btn-respondido.is-respondido {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #16a34a;
+    }
+    .btn-respondido.loading { opacity: .6; cursor: not-allowed; }
 
     .reading-attachments {
       padding: 9px 24px; background: var(--cream2); border-bottom: 1px solid var(--border);
@@ -352,13 +627,13 @@
     .reading-adj-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
     .reading-adj-chip {
       display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
-      background: var(--white); border: 1px solid var(--border); border-radius: 4px;
+      background: var(--white); border: 1px solid var(--border); border-radius: 5px;
       font-size: 11px; color: var(--navy);
     }
     .reading-adj-chip svg { color: var(--muted); flex-shrink: 0; }
     .reading-adj-size { color: var(--muted); }
     .reading-adj-dl {
-      padding: 2px 8px; border: 1px solid var(--gold); border-radius: 3px;
+      padding: 2px 8px; border: 1px solid var(--gold); border-radius: 4px;
       background: none; color: var(--gold2); font-size: 10px; font-weight: 700;
       font-family: inherit; cursor: pointer; transition: all .15s;
     }
@@ -371,8 +646,7 @@
     /* ══════════════════════════════════════════════
        SCHEDULED VIEW
     ══════════════════════════════════════════════ */
-    .sched-view-pane { flex: 1; display: flex; flex-direction: column; background: var(--cream2); overflow: hidden; }
-
+    .sched-view-pane { flex: 1; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
     .sched-view-top {
       padding: 16px 24px 12px; border-bottom: 1px solid var(--border); background: var(--white); flex-shrink: 0;
       display: flex; align-items: center; justify-content: space-between;
@@ -383,17 +657,15 @@
     .sched-view-list { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
 
     .sched-card {
-      background: var(--white); border: 1px solid var(--border); border-radius: 8px;
+      background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
       padding: 16px 20px; display: flex; align-items: center; gap: 16px;
       transition: box-shadow .15s;
     }
     .sched-card:hover { box-shadow: 0 2px 14px rgba(15,27,53,.08); }
-
     .sched-card-icon {
       width: 42px; height: 42px; background: rgba(201,165,88,.1); border-radius: 50%;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gold2);
     }
-
     .sched-card-info { flex: 1; min-width: 0; }
     .sched-card-subject { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .sched-card-to      { font-size: 12px; color: var(--muted); margin-bottom: 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -402,7 +674,6 @@
       color: var(--gold2); background: rgba(201,165,88,.08); border: 1px solid rgba(201,165,88,.25);
       border-radius: 4px; padding: 3px 9px;
     }
-
     .sched-card-empty {
       flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
       text-align: center; color: var(--muted); padding: 60px 24px;
@@ -412,11 +683,11 @@
     .sched-card-empty p   { font-size: 12px; }
 
     .btn-cancel {
-      flex-shrink: 0; padding: 6px 13px; border: 1.5px solid #fca5a5; border-radius: var(--radius);
+      flex-shrink: 0; padding: 6px 13px; border: 1.5px solid #fca5a5; border-radius: 6px;
       background: var(--white); color: #dc2626; font-size: 11px; font-weight: 700;
       font-family: inherit; cursor: pointer; transition: all .15s;
     }
-    .btn-cancel:hover { background: #fef2f2; border-color: #ef4444; }
+    .btn-cancel:hover { background: #fef2f2; border-color: var(--danger); }
 
     /* ══════════════════════════════════════════════
        MODALS
@@ -427,70 +698,60 @@
       opacity: 0; pointer-events: none; transition: opacity .2s; padding: 16px;
     }
     .modal-overlay.open { opacity: 1; pointer-events: auto; }
-
     .modal-box {
-      background: var(--white); border-radius: 10px; width: 400px; max-width: 100%;
+      background: var(--white); border-radius: 12px; width: 400px; max-width: 100%;
       box-shadow: 0 24px 64px rgba(10,18,36,.28); overflow: hidden;
       transform: translateY(10px) scale(.98); transition: transform .2s;
     }
     .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
-
     .modal-header {
       padding: 16px 22px 14px; display: flex; align-items: center;
       justify-content: space-between; border-bottom: 1px solid var(--border);
     }
     .modal-header h3 { font-size: 14px; font-weight: 700; color: var(--navy); }
-
     .modal-close {
       background: none; border: none; cursor: pointer; color: var(--muted); padding: 5px;
       border-radius: 5px; display: flex; align-items: center; transition: all .15s;
     }
-    .modal-close:hover { background: var(--cream); color: var(--navy); }
-
+    .modal-close:hover { background: var(--bg); color: var(--navy); }
     .modal-body { padding: 16px 22px; }
     .modal-hint { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
-
     .quick-opts { display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
     .quick-opt {
       display: flex; align-items: center; gap: 10px; padding: 10px 14px;
-      background: var(--cream2); border: 1.5px solid var(--border); border-radius: 7px;
+      background: #f8fafc; border: 1.5px solid var(--border); border-radius: 8px;
       cursor: pointer; font-family: inherit; font-size: 13px; color: var(--navy);
       transition: all .15s; width: 100%; text-align: left;
     }
     .quick-opt:hover { border-color: var(--gold); background: #fdf8ee; }
     .quick-opt .opt-label { flex: 1; font-weight: 600; }
     .quick-opt .opt-when  { font-size: 11px; color: var(--muted); white-space: nowrap; }
-
     .or-divider {
       display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--muted);
       letter-spacing: 1px; text-transform: uppercase; margin: 4px 0 14px;
     }
     .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
     .dt-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .dt-field { display: flex; flex-direction: column; gap: 5px; }
     .dt-field label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
     .dt-field input {
-      padding: 9px 11px; border: 1.5px solid var(--border); border-radius: var(--radius);
+      padding: 9px 11px; border: 1.5px solid var(--border); border-radius: 6px;
       font-size: 13px; color: var(--navy); font-family: inherit; background: var(--white); outline: none;
     }
     .dt-field input:focus { border-color: var(--navy2); }
-
     .modal-footer {
       padding: 12px 22px; display: flex; gap: 10px; justify-content: flex-end;
-      border-top: 1px solid var(--border); background: var(--cream2);
+      border-top: 1px solid var(--border); background: #f8fafc;
     }
-
     .btn-ghost {
-      padding: 8px 16px; border: 1.5px solid var(--border); border-radius: var(--radius);
+      padding: 8px 16px; border: 1.5px solid var(--border); border-radius: 6px;
       background: var(--white); color: var(--text); font-size: 13px; font-weight: 600;
       font-family: inherit; cursor: pointer; transition: all .15s;
     }
     .btn-ghost:hover { border-color: var(--navy); color: var(--navy); }
-
     .btn-primary {
       display: inline-flex; align-items: center; gap: 7px; padding: 8px 18px;
-      background: var(--navy); color: var(--white); border: none; border-radius: var(--radius);
+      background: var(--navy); color: var(--white); border: none; border-radius: 6px;
       font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: background .15s;
     }
     .btn-primary:hover:not(:disabled) { background: var(--navy2); }
@@ -502,238 +763,539 @@
       background: var(--navy); color: var(--white); padding: 12px 20px; border-left: 3px solid var(--gold);
       font-size: 13px; font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,.2); opacity: 0;
       transition: opacity .25s, transform .25s; z-index: 999; pointer-events: none; white-space: nowrap;
+      border-radius: 0 4px 4px 0;
     }
     #toast.show    { opacity: 1; transform: translateX(-50%) translateY(0); }
-    #toast.success { border-color: #22c55e; }
-    #toast.error   { border-color: #e53e3e; }
+    #toast.success { border-color: var(--success); }
+    #toast.error   { border-color: var(--danger); }
 
-    /* ── Mobile ── */
+    /* ══════════════════════════════════════════════
+       GEMINI AI PANELS
+    ══════════════════════════════════════════════ */
+    .ai-toggle-wrap {
+      padding: 8px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ai-toggle-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border: 1.5px solid #ddd6fe; border-radius: 20px;
+      background: #faf5ff; color: #7c3aed;
+      font-size: 11px; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: all .15s; letter-spacing: .3px;
+    }
+    .ai-toggle-btn:hover { background: #ede9fe; border-color: #a78bfa; }
+    .ai-compose-panel {
+      padding: 14px 24px; border-bottom: 1px solid var(--border);
+      background: #faf5ff; display: none; flex-direction: column; gap: 10px;
+    }
+    .ai-compose-panel.open { display: flex; animation: dropDown .14s ease; }
+    @keyframes dropDown { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+    .ai-panel-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: #7c3aed;
+    }
+    .ai-intent-textarea {
+      width: 100%; border: 1.5px solid #ddd6fe; border-radius: 8px;
+      padding: 10px 12px; font-size: 13px; font-family: inherit;
+      color: var(--navy); resize: none; height: 68px; outline: none;
+      background: var(--white); transition: border-color .15s;
+    }
+    .ai-intent-textarea:focus  { border-color: #7c3aed; }
+    .ai-intent-textarea::placeholder { color: #b0a0d0; }
+    .ai-panel-actions { display: flex; gap: 8px; align-items: center; }
+    .btn-ai-generate {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 16px; background: #7c3aed; color: var(--white);
+      border: none; border-radius: 6px; font-size: 12px; font-weight: 700;
+      font-family: inherit; cursor: pointer; transition: background .15s;
+    }
+    .btn-ai-generate:hover:not(:disabled) { background: #6d28d9; }
+    .btn-ai-generate:disabled { opacity: .5; cursor: not-allowed; }
+    .ai-spinner {
+      width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .btn-ai-close {
+      padding: 8px 12px; border: 1.5px solid #ddd6fe; border-radius: 6px;
+      background: none; color: #7c3aed; font-size: 12px; font-weight: 600;
+      font-family: inherit; cursor: pointer; transition: background .15s;
+    }
+    .btn-ai-close:hover { background: #ede9fe; }
+
+    /* Reading pane AI */
+    .ai-reading-bar {
+      padding: 10px 24px; border-bottom: 1px solid var(--border);
+      background: #faf5ff; flex-shrink: 0;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .btn-ai-suggest {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 14px; border: 1.5px solid #c4b5fd; border-radius: 6px;
+      background: var(--white); color: #7c3aed;
+      font-size: 12px; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: all .15s;
+    }
+    .btn-ai-suggest:hover { background: #ede9fe; border-color: #7c3aed; }
+    .btn-ai-suggest:disabled { opacity: .5; cursor: not-allowed; }
+    .ai-suggest-status { font-size: 11px; color: #7c3aed; font-style: italic; }
+    .ai-suggestion-panel {
+      padding: 14px 24px; background: #faf5ff;
+      border-bottom: 1px solid var(--border);
+      flex-direction: column; gap: 10px; flex-shrink: 0;
+    }
+    .ai-suggestion-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: #7c3aed;
+    }
+    .ai-suggestion-textarea {
+      width: 100%; border: 1.5px solid #ddd6fe; border-radius: 8px;
+      padding: 10px 12px; font-size: 13px; font-family: inherit;
+      color: var(--navy); resize: vertical; min-height: 90px; outline: none;
+      background: var(--white); transition: border-color .15s;
+    }
+    .ai-suggestion-textarea:focus { border-color: #7c3aed; }
+    .ai-suggestion-actions { display: flex; gap: 8px; }
+    .btn-apply-reply {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 16px; background: var(--navy); color: var(--white);
+      border: none; border-radius: 6px; font-size: 12px; font-weight: 700;
+      font-family: inherit; cursor: pointer; transition: background .15s;
+    }
+    .btn-apply-reply:hover { background: var(--navy2); }
+
+    /* ══════════════════════════════════════════════
+       BOTTOM NAV + FAB (solo mobile)
+    ══════════════════════════════════════════════ */
+    .bottom-nav {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--navy); border-top: 1px solid rgba(255,255,255,.1);
+      height: 62px; z-index: 200;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .bottom-nav-inner {
+      display: flex; height: 100%; align-items: stretch;
+    }
+    .bottom-nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 3px;
+      background: none; border: none; border-top: 2px solid transparent;
+      color: rgba(255,255,255,.38); font-size: 10px; font-weight: 600;
+      font-family: inherit; cursor: pointer; padding: 6px 0;
+      transition: color .14s, border-color .14s;
+    }
+    .bottom-nav-item.active { color: var(--gold); border-top-color: var(--gold); }
+    .fab {
+      display: none; position: fixed; bottom: 76px; right: 18px;
+      width: 52px; height: 52px; background: var(--gold); color: var(--navy);
+      border: none; border-radius: 50%; box-shadow: 0 4px 18px rgba(0,0,0,.28);
+      cursor: pointer; align-items: center; justify-content: center;
+      z-index: 201; transition: transform .14s, box-shadow .14s;
+    }
+    .fab:active { transform: scale(.91); box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+
+    /* Mobile back bar (reading pane) */
+    .mobile-back-bar {
+      display: none; align-items: center; gap: 10px;
+      padding: 11px 16px; background: var(--navy); flex-shrink: 0; min-width: 0;
+    }
+    .mobile-back-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: none; border: none; color: var(--gold);
+      font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer;
+      white-space: nowrap; flex-shrink: 0; padding: 0;
+    }
+    .mobile-back-title {
+      font-size: 12px; color: rgba(255,255,255,.7); overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap; flex: 1;
+    }
+
+    /* ══════════════════════════════════════════════
+       MOBILE RESPONSIVE
+    ══════════════════════════════════════════════ */
     @media (max-width: 768px) {
       .sidebar { display: none; }
-      .compose-panel { width: 100%; border-right: none; }
-      #view-compose.active { flex-direction: column; }
-      .preview-panel { display: none; }
-      .mail-list-pane { width: 100%; }
-      .mail-reading-pane { display: none; }
-      #view-sent.active { flex-direction: column; }
+      .bottom-nav { display: flex; }
+      .fab { display: flex; }
+
+      .app { height: calc(100dvh - 62px); }
+
+      /* Dashboard */
+      .kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .dash-body { padding: 12px 12px 16px; }
+      .dash-header { padding: 12px 14px 10px; }
+      .dash-header-left h1 { font-size: 15px; }
+      .kpi-number { font-size: 22px; }
+      .kpi-card { padding: 12px; }
+      .activity-table th:nth-child(3),
+      .activity-table td:nth-child(3),
+      .activity-table th:nth-child(4),
+      .activity-table td:nth-child(4) { display: none; }
+      .activity-table td, .activity-table th { padding: 9px 12px; }
+
+      /* Compose */
+      #view-compose.active { flex-direction: column !important; }
+      .compose-panel { width: 100%; border-right: none; height: 100%; overflow-y: auto; flex-shrink: 0; }
+      .preview-panel { display: none !important; }
+
+      /* Sent — list full screen */
+      #view-sent.active { flex-direction: column !important; }
+      .mail-list-pane { width: 100%; border-right: none; }
+      .mail-reading-pane {
+        position: fixed; inset: 0; bottom: 62px;
+        z-index: 150; background: var(--bg);
+        display: none; flex-direction: column;
+      }
+      .mail-reading-pane.mobile-open { display: flex !important; }
+      .mobile-back-bar { display: flex; }
+
+      /* Scheduled */
+      .sched-view-top { padding: 12px 14px 10px; }
+      .sched-view-list { padding: 12px 12px; }
+      .sched-card { padding: 12px 14px; gap: 10px; }
     }
   </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- Topbar -->
-  <header class="topbar">
-    <div class="topbar-brand">
-      <img class="topbar-logo" src="/proveedor-mailer/logo.jpeg" alt="Mercado Limpio">
-      <div class="topbar-divider"></div>
-      <span class="topbar-title">Comunicaciones</span>
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo-wrap">
+      <img class="sidebar-logo" src="/proveedor-mailer/logo.jpeg" alt="Mercado Limpio">
     </div>
-    <div class="topbar-right">
-      <span class="topbar-meta">proveedores@mercadolimpio.ar</span>
+
+    <button class="sidebar-new-btn" onclick="switchView('compose')">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+      </svg>
+      Nuevo mensaje
+    </button>
+
+    <div class="nav-section">Navegación</div>
+
+    <button class="nav-item active" data-view="dashboard" onclick="switchView('dashboard')">
+      <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      Dashboard
+    </button>
+
+    <button class="nav-item" data-view="compose" onclick="switchView('compose')">
+      <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+      </svg>
+      Redactar
+    </button>
+
+    <button class="nav-item" data-view="sent" onclick="switchView('sent')">
+      <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+      </svg>
+      Enviados
+      <span class="nav-badge" id="sentBadge"></span>
+    </button>
+
+    <div class="nav-divider"></div>
+
+    <button class="nav-item" data-view="scheduled" onclick="switchView('scheduled')">
+      <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+      Programados
+      <span class="nav-badge" id="schedBadge"></span>
+    </button>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-from">
+        <div class="sidebar-dot"></div>
+        <span>proveedores@mercadolimpio.ar</span>
+      </div>
     </div>
-  </header>
+  </nav>
 
-  <div class="workspace">
+  <!-- Main content -->
+  <div class="main-content">
 
-    <!-- Sidebar -->
-    <nav class="sidebar">
-      <div class="sidebar-section">Correos</div>
-
-      <button class="nav-item active" data-view="compose" onclick="switchView('compose')">
-        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-        </svg>
-        Redactar
-      </button>
-
-      <button class="nav-item" data-view="sent" onclick="switchView('sent')">
-        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-        </svg>
-        Enviados
-        <span class="nav-badge" id="sentBadge"></span>
-      </button>
-
-      <div class="nav-divider"></div>
-
-      <button class="nav-item" data-view="scheduled" onclick="switchView('scheduled')">
-        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-        </svg>
-        Programados
-        <span class="nav-badge" id="schedBadge"></span>
-      </button>
-
-      <div class="sidebar-footer">
-        <div class="sidebar-from">
-          <div class="sidebar-dot"></div>
-          <span>proveedores@mercadolimpio.ar</span>
+    <!-- VIEW: Dashboard -->
+    <div id="view-dashboard" class="view active">
+      <div class="dash-header">
+        <div class="dash-header-left">
+          <h1 id="dashGreeting">Bienvenido</h1>
+          <p id="dashDate"></p>
+        </div>
+        <button class="dash-refresh-btn" onclick="loadDashboard()">
+          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Actualizar
+        </button>
+      </div>
+      <div class="dash-body" id="dashBody">
+        <div class="dash-loading">
+          <div class="spin-icon"></div>
+          Cargando estadísticas…
         </div>
       </div>
-    </nav>
+    </div>
 
-    <!-- Main content -->
-    <div class="main-content">
+    <!-- VIEW: Redactar -->
+    <div id="view-compose" class="view">
+      <aside class="compose-panel">
+        <div class="compose-header">
+          <h2>Nuevo mensaje</h2>
+          <p>El proveedor recibirá una comunicación oficial de Mercado Limpio</p>
+        </div>
 
-      <!-- VIEW: Redactar -->
-      <div id="view-compose" class="view active">
-        <aside class="compose-panel">
-          <div class="compose-header">
-            <h2>Nuevo mensaje</h2>
-            <p>El proveedor recibirá una comunicación oficial de Mercado Limpio</p>
-          </div>
+        <div class="field" id="toField">
+          <label for="toInput">Para</label>
+          <input id="toInput" type="email" inputmode="email"
+            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+            placeholder="email@proveedor.com">
+          <div class="ac-list" id="acList"></div>
+        </div>
 
-          <div class="field" id="toField">
-            <label for="toInput">Para</label>
-            <input id="toInput" type="email" inputmode="email"
-              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-              placeholder="email@proveedor.com">
-            <div class="ac-list" id="acList"></div>
-          </div>
+        <div class="field">
+          <label for="subjectInput">Asunto</label>
+          <input id="subjectInput" type="text" autocomplete="off"
+            placeholder="Pedido · Lista de precios · Consulta">
+        </div>
 
-          <div class="field">
-            <label for="subjectInput">Asunto</label>
-            <input id="subjectInput" type="text" autocomplete="off"
-              placeholder="Pedido · Lista de precios · Consulta">
-          </div>
-
-          <div class="field" style="border-bottom:none">
-            <label for="msgInput" style="padding-top:16px">Mensaje</label>
-            <textarea id="msgInput"
-              placeholder="Estimados,&#10;&#10;Me dirijo a ustedes..."
-              spellcheck="true"></textarea>
-          </div>
-
-          <div class="attach-zone">
-            <div class="attach-label">Adjuntos</div>
-            <label class="attach-btn" for="fileInput">
-              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-              </svg>
-              Adjuntar archivo
-            </label>
-            <input type="file" id="fileInput" multiple
-              accept=".pdf,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp,.csv,.txt,.zip,.doc,.docx">
-            <div class="chips" id="chipsContainer"></div>
-          </div>
-
-          <div class="compose-footer">
-            <div class="from-badge">
-              <div class="from-dot"></div>
-              <span>proveedores@mercadolimpio.ar</span>
-            </div>
-            <div class="btn-send-wrap">
-              <button class="btn-send" id="sendBtn" onclick="sendEmail()">
-                <span id="btnText">Enviar</span>
-                <div class="spinner" id="spinner"></div>
-                <div class="gold-bar"></div>
-              </button>
-              <button class="btn-arrow" id="arrowBtn" onclick="toggleDropdown(event)">
-                <svg width="9" height="9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </button>
-              <div class="sched-dropdown" id="schedDropdown">
-                <button class="dropdown-item" onclick="openScheduleModal()">
-                  <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                  </svg>
-                  Programar envío
-                </button>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        <main class="preview-panel">
-          <div class="preview-header">
-            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--muted)">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-            </svg>
-            <span>Vista previa del email</span>
-            <div class="live-dot"></div>
-            <span class="live-label">En vivo</span>
-          </div>
-          <div class="preview-frame-wrap">
-            <div class="preview-shadow">
-              <iframe id="previewFrame" sandbox="allow-same-origin"></iframe>
-            </div>
-          </div>
-        </main>
-      </div><!-- /#view-compose -->
-
-      <!-- VIEW: Enviados -->
-      <div id="view-sent" class="view">
-        <div class="mail-list-pane">
-          <div class="mail-pane-header">
-            <h3>Enviados</h3>
-            <span class="mail-pane-count" id="sentMailCount"></span>
-          </div>
-          <div class="mail-search-wrap">
-            <input class="mail-search-input" id="mailSearchInput" type="text"
-                   placeholder="Buscar emails…" oninput="filterMailList(this.value)">
-          </div>
-          <div class="mail-list-body" id="mailListBody">
-            <div class="mail-empty">
-              <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-              </svg>
-              <p>Cargando historial…</p>
-            </div>
+        <!-- IA: Redactar -->
+        <div class="ai-toggle-wrap">
+          <button class="ai-toggle-btn" onclick="toggleAIPanel()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z"/></svg>
+            Redactar con IA
+          </button>
+        </div>
+        <div id="aiComposePanel" class="ai-compose-panel">
+          <span class="ai-panel-label">¿Qué querés transmitir?</span>
+          <textarea id="aiIntentionInput" class="ai-intent-textarea"
+            placeholder="Ej: Avisarle que el pago se procesó pero falta una factura del mes pasado…"></textarea>
+          <div class="ai-panel-actions">
+            <button id="aiGenerateBtn" class="btn-ai-generate" onclick="geminiRedactar()">
+              <span id="aiGenText">Generar email</span>
+              <div class="ai-spinner" id="aiGenSpinner" style="display:none"></div>
+            </button>
+            <button class="btn-ai-close" onclick="toggleAIPanel()">Cerrar</button>
           </div>
         </div>
 
-        <div class="mail-reading-pane">
-          <div class="reading-empty" id="readingEmpty">
-            <svg width="56" height="56" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width=".8">
+        <div class="field" style="border-bottom:none">
+          <label for="msgInput" style="padding-top:16px">Mensaje</label>
+          <textarea id="msgInput"
+            placeholder="Estimados,&#10;&#10;Me dirijo a ustedes..."
+            spellcheck="true"></textarea>
+        </div>
+
+        <div class="attach-zone">
+          <div class="attach-label">Adjuntos</div>
+          <label class="attach-btn" for="fileInput">
+            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+            </svg>
+            Adjuntar archivo
+          </label>
+          <input type="file" id="fileInput" multiple
+            accept=".pdf,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp,.csv,.txt,.zip,.doc,.docx">
+          <div class="chips" id="chipsContainer"></div>
+        </div>
+
+        <div class="compose-footer">
+          <div class="from-badge">
+            <div class="from-dot"></div>
+            <span>proveedores@mercadolimpio.ar</span>
+          </div>
+          <div class="btn-send-wrap">
+            <button class="btn-send" id="sendBtn" onclick="sendEmail()">
+              <span id="btnText">Enviar</span>
+              <div class="spinner" id="spinner"></div>
+              <div class="gold-bar"></div>
+            </button>
+            <button class="btn-arrow" id="arrowBtn" onclick="toggleDropdown(event)">
+              <svg width="9" height="9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            <div class="sched-dropdown" id="schedDropdown">
+              <button class="dropdown-item" onclick="openScheduleModal()">
+                <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                Programar envío
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="preview-panel">
+        <div class="preview-header">
+          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--muted)">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+          <span>Vista previa del email</span>
+          <div class="live-dot"></div>
+          <span class="live-label">En vivo</span>
+        </div>
+        <div class="preview-frame-wrap">
+          <div class="preview-shadow">
+            <iframe id="previewFrame" sandbox="allow-same-origin"></iframe>
+          </div>
+        </div>
+      </main>
+    </div><!-- /#view-compose -->
+
+    <!-- VIEW: Enviados -->
+    <div id="view-sent" class="view">
+      <div class="mail-list-pane">
+        <div class="mail-pane-header">
+          <h3>Enviados</h3>
+          <span class="mail-pane-count" id="sentMailCount"></span>
+        </div>
+        <div class="mail-filter-tabs">
+          <button class="mail-filter-tab active" id="tabTodos"    onclick="setMailFilter('all')">Todos</button>
+          <button class="mail-filter-tab"         id="tabSinResp" onclick="setMailFilter('sinresponder')">Sin responder</button>
+        </div>
+        <div class="mail-search-wrap">
+          <input class="mail-search-input" id="mailSearchInput" type="text"
+                 placeholder="Buscar emails…" oninput="filterMailList(this.value, currentMailFilter)">
+        </div>
+        <div class="mail-list-body" id="mailListBody">
+          <div class="mail-empty">
+            <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
             </svg>
-            <p>Seleccioná un email para leerlo</p>
+            <p>Cargando historial…</p>
           </div>
-          <div class="reading-content" id="readingContent" style="display:none">
-            <div class="reading-header"  id="readingHeader"></div>
-            <div class="reading-attachments" id="readingAttachments" style="display:none"></div>
-            <div class="reading-iframe-wrap">
-              <div class="reading-iframe-shadow">
-                <iframe id="readingFrame" sandbox="allow-same-origin"></iframe>
-              </div>
+        </div>
+      </div>
+
+      <div class="mail-reading-pane" id="mailReadingPane">
+        <!-- Mobile: barra de volver -->
+        <div class="mobile-back-bar" id="mobileBackBar">
+          <button class="mobile-back-btn" onclick="closeMobileReading()">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Volver
+          </button>
+          <span class="mobile-back-title" id="mobileBackTitle"></span>
+        </div>
+        <div class="reading-empty" id="readingEmpty">
+          <svg width="56" height="56" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width=".8">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          <p>Seleccioná un email para leerlo</p>
+        </div>
+        <div class="reading-content" id="readingContent" style="display:none">
+          <div class="reading-header"  id="readingHeader"></div>
+          <div class="reading-attachments" id="readingAttachments" style="display:none"></div>
+
+          <!-- IA: Sugerir respuesta -->
+          <div class="ai-reading-bar" id="aiReadingBar" style="display:none">
+            <button id="btnAISuggest" class="btn-ai-suggest" onclick="geminiSugerirRespuesta()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z"/></svg>
+              Sugerir respuesta con IA
+            </button>
+            <span class="ai-suggest-status" id="aiSuggestStatus" style="display:none">Analizando email…</span>
+          </div>
+          <div class="ai-suggestion-panel" id="aiSuggestionPanel" style="display:none">
+            <span class="ai-suggestion-label">Respuesta sugerida — podés editarla</span>
+            <textarea id="aiSuggestionText" class="ai-suggestion-textarea"
+              placeholder="La sugerencia de IA aparecerá aquí…"></textarea>
+            <div class="ai-suggestion-actions">
+              <button class="btn-apply-reply" onclick="applyAIReply()">
+                <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                </svg>
+                Usar esta respuesta
+              </button>
+              <button class="btn-ai-close" onclick="closeAISuggestion()">Cerrar</button>
+            </div>
+          </div>
+
+          <div class="reading-iframe-wrap">
+            <div class="reading-iframe-shadow">
+              <iframe id="readingFrame" sandbox="allow-same-origin"></iframe>
             </div>
           </div>
         </div>
-      </div><!-- /#view-sent -->
+      </div>
+    </div><!-- /#view-sent -->
 
-      <!-- VIEW: Programados -->
-      <div id="view-scheduled" class="view">
-        <div class="sched-view-pane">
-          <div class="sched-view-top">
-            <div>
-              <h3>Emails programados</h3>
-              <p>Se envían automáticamente en el horario configurado</p>
-            </div>
-          </div>
-          <div class="sched-view-list" id="schedViewList">
-            <div class="sched-card-empty">
-              <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-              </svg>
-              <h4>No hay emails programados</h4>
-              <p>Usá el botón "Programar envío" desde Redactar</p>
-            </div>
+    <!-- VIEW: Programados -->
+    <div id="view-scheduled" class="view">
+      <div class="sched-view-pane">
+        <div class="sched-view-top">
+          <div>
+            <h3>Emails programados</h3>
+            <p>Se envían automáticamente en el horario configurado</p>
           </div>
         </div>
-      </div><!-- /#view-scheduled -->
+        <div class="sched-view-list" id="schedViewList">
+          <div class="sched-card-empty">
+            <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <h4>No hay emails programados</h4>
+            <p>Usá el botón "Programar envío" desde Redactar</p>
+          </div>
+        </div>
+      </div>
+    </div><!-- /#view-scheduled -->
 
-    </div><!-- /.main-content -->
-  </div><!-- /.workspace -->
+  </div><!-- /.main-content -->
 </div><!-- /.app -->
+
+<!-- Bottom nav (mobile) -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bottom-nav-item active" data-view="dashboard" onclick="switchView('dashboard')">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      Inicio
+    </button>
+    <button class="bottom-nav-item" data-view="compose" onclick="switchView('compose')">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+      </svg>
+      Redactar
+    </button>
+    <button class="bottom-nav-item" data-view="sent" onclick="switchView('sent')">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+      </svg>
+      Enviados
+    </button>
+    <button class="bottom-nav-item" data-view="scheduled" onclick="switchView('scheduled')">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+      Programados
+    </button>
+  </div>
+</nav>
+
+<!-- FAB componer (mobile) -->
+<button class="fab" onclick="switchView('compose')" title="Nuevo mensaje">
+  <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+  </svg>
+</button>
 
 <!-- MODAL: Programar envío -->
 <div class="modal-overlay" id="scheduleModal" onclick="onOverlayClick(event,'scheduleModal')">
@@ -782,15 +1344,244 @@
   const FROM_EMAIL    = "proveedores@mercadolimpio.ar";
   const FROM_NAME     = "Mercado Limpio";
 
+  // ── Helpers ─────────────────────────────────────────────────────────────────
+  function esc(s)     { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function escHtml(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function fmtSize(b) { if (b<1024) return b+" B"; if (b<1048576) return (b/1024).toFixed(0)+" KB"; return (b/1048576).toFixed(1)+" MB"; }
+  function fmtDate(d) { return d.toLocaleDateString("es-AR",{weekday:"short",day:"numeric",month:"short"})+" "+d.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"}); }
+  function fmtScheduled(iso) { return new Date(iso).toLocaleDateString("es-AR",{weekday:"short",day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}); }
+
+  function fmtRelative(isoStr) {
+    const diff = Date.now() - new Date(isoStr).getTime();
+    const m = Math.floor(diff / 60000);
+    if (m < 1)   return "hace un momento";
+    if (m < 60)  return `hace ${m}m`;
+    const h = Math.floor(m / 60);
+    if (h < 24)  return `hace ${h}h`;
+    const d = Math.floor(h / 24);
+    if (d < 7)   return `hace ${d} día${d!==1?"s":""}`;
+    const w = Math.floor(d / 7);
+    if (w < 5)   return `hace ${w} semana${w!==1?"s":""}`;
+    const mo = Math.floor(d / 30);
+    return `hace ${mo} mes${mo!==1?"es":""}`;
+  }
+
+  let toastTimer;
+  function showToast(msg, type = "") {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.className = "show" + (type ? " " + type : "");
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.className = ""; }, 3800);
+  }
+
+  function fileIcon(name) {
+    const ext = name.split(".").pop().toLowerCase();
+    if (["jpg","jpeg","png","gif","webp"].includes(ext)) return `<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>`;
+    if (["xls","xlsx","csv"].includes(ext)) return `<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 17v-2m3 2v-4m3 4v-6M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>`;
+    return `<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>`;
+  }
+
+  function deliveryBadgeHtml(estado) {
+    if (!estado || estado === 'enviado') return `<span class="delivery-badge sent">Enviado</span>`;
+    if (estado === 'entregado') return `<span class="delivery-badge delivered">&#10003; Entregado</span>`;
+    if (estado === 'rebotado')  return `<span class="delivery-badge bounced">&#10007; Rebotado</span>`;
+    if (estado === 'spam')      return `<span class="delivery-badge spam">Spam</span>`;
+    return `<span class="delivery-badge sent">${esc(estado)}</span>`;
+  }
+
+  function replyBadgeHtml(respondido) {
+    if (respondido) return `<span class="reply-badge replied">&#10003; Respondió</span>`;
+    return `<span class="reply-badge pending">Sin respuesta</span>`;
+  }
+
   // ── Navegación ──────────────────────────────────────────────────────────────
   function switchView(view) {
     document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".bottom-nav-item").forEach(el => el.classList.remove("active"));
     document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
-    document.querySelector(`.nav-item[data-view="${view}"]`).classList.add("active");
+    const navEl = document.querySelector(`.nav-item[data-view="${view}"]`);
+    if (navEl) navEl.classList.add("active");
+    const botNavEl = document.querySelector(`.bottom-nav-item[data-view="${view}"]`);
+    if (botNavEl) botNavEl.classList.add("active");
     document.getElementById(`view-${view}`).classList.add("active");
+    // Close mobile reading pane when leaving sent view
+    if (view !== "sent") closeMobileReading();
     if (view === "sent")      loadSentEmails();
     if (view === "scheduled") loadScheduledView();
+    if (view === "dashboard") loadDashboard();
   }
+
+  // ── Dashboard ────────────────────────────────────────────────────────────────
+  function initDashHeader() {
+    const now = new Date();
+    const h = now.getHours();
+    let greet = "Buenas noches";
+    if (h >= 5 && h < 12)  greet = "Buenos días";
+    else if (h >= 12 && h < 19) greet = "Buenas tardes";
+    document.getElementById("dashGreeting").textContent = greet + ", Mercado Limpio";
+    document.getElementById("dashDate").textContent = now.toLocaleDateString("es-AR", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    });
+  }
+
+  async function loadDashboard() {
+    initDashHeader();
+    const body = document.getElementById("dashBody");
+    body.innerHTML = `<div class="dash-loading"><div class="spin-icon"></div>Cargando estadísticas…</div>`;
+    try {
+      const res  = await fetch(`${WORKER_URL}/dashboard`, { headers: HEADERS });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Error al cargar datos");
+      renderDashboard(data.kpis, data.recientes);
+    } catch (err) {
+      body.innerHTML = `<div style="padding:32px;color:var(--danger);font-size:13px">Error: ${esc(err.message)}</div>`;
+    }
+  }
+
+  function renderDashboard(k, recientes) {
+    const body = document.getElementById("dashBody");
+    const pct  = k.total > 0 ? Math.round((k.respondidos / k.total) * 100) : 0;
+    const semDiff = k.semana - k.prevSemana;
+    const semArrow = semDiff > 0
+      ? `<span class="up">&#8593; ${semDiff} más que la semana pasada</span>`
+      : semDiff < 0
+        ? `<span class="down">&#8595; ${Math.abs(semDiff)} menos que la semana pasada</span>`
+        : `<span>Igual que la semana pasada</span>`;
+
+    body.innerHTML = `
+      <div class="kpi-grid">
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div>
+              <div class="kpi-number">${k.total}</div>
+              <div class="kpi-label">Emails enviados</div>
+            </div>
+            <div class="kpi-icon blue">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-trend">Esta semana: <strong>${k.semana}</strong> · Este mes: <strong>${k.mes}</strong></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div>
+              <div class="kpi-number">${k.semana}</div>
+              <div class="kpi-label">Esta semana</div>
+            </div>
+            <div class="kpi-icon navy">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-trend">${semArrow}</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div>
+              <div class="kpi-number">${k.respondidos}</div>
+              <div class="kpi-label">Respondidos</div>
+            </div>
+            <div class="kpi-icon green">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-trend">${pct}% del total de emails enviados</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div>
+              <div class="kpi-number" style="${k.sinResponder > 0 ? 'color:var(--warning)' : ''}">${k.sinResponder}</div>
+              <div class="kpi-label">Sin respuesta</div>
+            </div>
+            <div class="kpi-icon amber">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-trend">${k.sinResponder > 0 ? `<span class="warn">Pendientes de seguimiento</span>` : `<span style="color:var(--success)">Todo respondido</span>`}</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div>
+              <div class="kpi-number">${k.adjuntos}</div>
+              <div class="kpi-label">Con adjuntos</div>
+            </div>
+            <div class="kpi-icon purple">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-trend">${k.total > 0 ? Math.round((k.adjuntos/k.total)*100) : 0}% de los emails incluyen archivos</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div>
+              <div class="kpi-number" style="${k.programados > 0 ? 'color:var(--info)' : ''}">${k.programados}</div>
+              <div class="kpi-label">Programados</div>
+            </div>
+            <div class="kpi-icon blue">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-trend">${k.programados > 0 ? `<span class="up">${k.programados} pendiente${k.programados!==1?'s':''} de envío</span>` : `<span>Sin envíos pendientes</span>`}</div>
+        </div>
+
+      </div>
+
+      <div class="activity-section">
+        <div class="activity-section-header">
+          <h3>Actividad reciente</h3>
+          <span>Últimos 8 emails enviados</span>
+        </div>
+        ${recientes.length === 0
+          ? `<div style="padding:32px;text-align:center;color:var(--muted);font-size:13px">No hay emails aún</div>`
+          : `<table class="activity-table">
+              <thead>
+                <tr>
+                  <th>Asunto</th>
+                  <th>Destinatario</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                  <th>Respuesta</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${recientes.map(r => `
+                  <tr class="activity-row" onclick="openFromDashboard('${esc(r.id)}')">
+                    <td title="${esc(r.asunto)}">${esc(r.asunto)}</td>
+                    <td title="${esc((r.destinatarios||[]).join(', '))}">${esc((r.destinatarios||[])[0]||'')}</td>
+                    <td>${fmtRelative(r.enviado_at)}</td>
+                    <td>${deliveryBadgeHtml(r.estado_entrega)}</td>
+                    <td>${replyBadgeHtml(r.respondido)}</td>
+                  </tr>`).join('')}
+              </tbody>
+             </table>`
+        }
+      </div>
+    `;
+  }
+
+  function openFromDashboard(id) {
+    switchView('sent');
+    // loadSentEmails is called by switchView, but we need to open the item after load
+    _pendingOpenId = id;
+  }
+
+  let _pendingOpenId = null;
 
   // ── Archivos ────────────────────────────────────────────────────────────────
   let selectedFiles = [];
@@ -867,8 +1658,8 @@
     const subject = document.getElementById("subjectInput").value || "Asunto del mensaje";
     const message = document.getElementById("msgInput").value    || "El contenido del mensaje aparecerá aquí...";
     const date    = new Date().toLocaleDateString("es-AR", { day:"2-digit", month:"long", year:"numeric" });
-    const attList = selectedFiles.length ? `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px"><tr><td style="padding-bottom:10px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8a7a5a;border-bottom:1px solid #e8e0d0">Archivos adjuntos</td></tr>${selectedFiles.map(f=>`<tr><td style="padding:10px 0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;color:#4a5568;border-bottom:1px solid #f0ede8">📎&nbsp;&nbsp;${esc(f.name)}</td></tr>`).join("")}</table>` : "";
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{box-sizing:border-box}body{margin:0;background:#f0ede8;font-family:'Helvetica Neue',Arial,sans-serif}</style></head><body><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ede8;padding:32px 16px"><tr><td align="center"><table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;background:#fff;box-shadow:0 4px 32px rgba(15,27,53,.10)"><tr><td height="6" style="background:linear-gradient(90deg,#0f1b35 0%,#1e3a6e 100%)">&nbsp;</td></tr><tr><td align="center" style="padding:36px 48px 30px;border-bottom:3px solid #c9a558"><img src="${location.origin}/proveedor-mailer/logo.jpeg" width="190" style="display:block;border:0"></td></tr><tr><td style="padding:28px 48px 0"><p style="margin:0 0 5px;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#8a7a5a;font-weight:600">${date}</p><h2 style="margin:0;font-size:18px;font-weight:300;color:#0f1b35;border-bottom:1px solid #ede8e0;padding-bottom:20px">${escHtml(subject)}</h2></td></tr><tr><td style="padding:28px 48px 36px"><p style="margin:0;font-size:15px;color:#2d3748;line-height:1.85;font-weight:300">${escHtml(message).replace(/\n/g,"<br>")}</p>${attList}</td></tr><tr><td height="1" style="background:#c9a558">&nbsp;</td></tr><tr><td style="padding:28px 48px;background:#faf8f5"><p style="margin:0 0 3px;font-size:13px;font-weight:700;color:#0f1b35">${FROM_NAME}</p><p style="margin:0 0 10px;font-size:12px;color:#8a7a5a">Distribuidora · Buenos Aires, Argentina</p><p style="margin:0;font-size:11px;color:#a09070">${FROM_EMAIL}</p></td></tr><tr><td style="padding:18px 48px;background:#0f1b35"><p style="margin:0;font-size:10px;color:#5a7ab5;letter-spacing:1px;text-transform:uppercase">Mercado Limpio Distribuidora ®</p></td></tr></table></td></tr></table></body></html>`;
+    const attList = selectedFiles.length ? `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px"><tr><td style="padding-bottom:10px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8a7a5a;border-bottom:1px solid #e8e0d0">Archivos adjuntos</td></tr>${selectedFiles.map(f=>`<tr><td style="padding:10px 0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;color:#4a5568;border-bottom:1px solid #f0ede8">&#128206;&nbsp;&nbsp;${esc(f.name)}</td></tr>`).join("")}</table>` : "";
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{box-sizing:border-box}body{margin:0;background:#f0ede8;font-family:'Helvetica Neue',Arial,sans-serif}</style></head><body><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ede8;padding:32px 16px"><tr><td align="center"><table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;background:#fff;box-shadow:0 4px 32px rgba(15,27,53,.10)"><tr><td height="6" style="background:linear-gradient(90deg,#0f1b35 0%,#1e3a6e 100%)">&nbsp;</td></tr><tr><td align="center" style="padding:36px 48px 30px;border-bottom:3px solid #c9a558"><img src="${location.origin}/proveedor-mailer/logo.jpeg" width="190" style="display:block;border:0"></td></tr><tr><td style="padding:28px 48px 0"><p style="margin:0 0 5px;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#8a7a5a;font-weight:600">${date}</p><h2 style="margin:0;font-size:18px;font-weight:300;color:#0f1b35;border-bottom:1px solid #ede8e0;padding-bottom:20px">${escHtml(subject)}</h2></td></tr><tr><td style="padding:28px 48px 36px"><p style="margin:0;font-size:15px;color:#2d3748;line-height:1.85;font-weight:300">${escHtml(message).replace(/\n/g,"<br>")}</p>${attList}</td></tr><tr><td height="1" style="background:#c9a558">&nbsp;</td></tr><tr><td style="padding:28px 48px;background:#faf8f5"><p style="margin:0 0 3px;font-size:13px;font-weight:700;color:#0f1b35">${FROM_NAME}</p><p style="margin:0 0 10px;font-size:12px;color:#8a7a5a">Distribuidora · Buenos Aires, Argentina</p><p style="margin:0;font-size:11px;color:#a09070">${FROM_EMAIL}</p></td></tr><tr><td style="padding:18px 48px;background:#0f1b35"><p style="margin:0;font-size:10px;color:#5a7ab5;letter-spacing:1px;text-transform:uppercase">Mercado Limpio Distribuidora &#174;</p></td></tr></table></td></tr></table></body></html>`;
     const frame = document.getElementById("previewFrame");
     frame.srcdoc = html;
     frame.onload = () => { try { frame.style.height = Math.max(frame.contentDocument.body.scrollHeight + 32, 500) + "px"; } catch {} };
@@ -903,6 +1694,8 @@
       clearForm();
       const e = to.toLowerCase();
       if (!allContacts.includes(e)) allContacts.unshift(e);
+      // Switch to dashboard and reload KPIs
+      switchView('dashboard');
     } catch (err) {
       showToast("Error: " + err.message, "error");
     } finally {
@@ -1028,7 +1821,7 @@
           <button class="btn-cancel" onclick="cancelScheduledItem('${esc(item.id)}')">Cancelar</button>
         </div>`).join("");
     } catch (err) {
-      list.innerHTML = `<div style="padding:20px;color:#dc2626;font-size:13px">Error: ${esc(err.message)}</div>`;
+      list.innerHTML = `<div style="padding:20px;color:var(--danger);font-size:13px">Error: ${esc(err.message)}</div>`;
     }
   }
 
@@ -1054,6 +1847,7 @@
 
   // ── Enviados / Historial ────────────────────────────────────────────────────
   let sentEmailsData = [], currentEmailDetail = null, selectedMailId = null;
+  let currentMailFilter = 'all';
 
   async function loadSentEmails() {
     const body = document.getElementById("mailListBody");
@@ -1063,19 +1857,35 @@
       const data = await res.json();
       if (!data.ok) throw new Error(data.error);
       sentEmailsData = data.emails || [];
-      renderMailList(sentEmailsData);
+      filterMailList(document.getElementById("mailSearchInput").value, currentMailFilter);
       const n = sentEmailsData.length;
       document.getElementById("sentMailCount").textContent = `${n} email${n !== 1 ? "s" : ""}`;
       const b = document.getElementById("sentBadge");
       b.textContent = n; b.classList.toggle("visible", n > 0);
+      // If we need to open a specific item from the dashboard
+      if (_pendingOpenId) {
+        const pid = _pendingOpenId;
+        _pendingOpenId = null;
+        openMailItem(pid);
+      }
     } catch (err) {
-      body.innerHTML = `<div style="padding:20px;color:#dc2626;font-size:13px">Error: ${esc(err.message)}</div>`;
+      body.innerHTML = `<div style="padding:20px;color:var(--danger);font-size:13px">Error: ${esc(err.message)}</div>`;
     }
   }
 
-  function filterMailList(q) {
-    const lq = q.toLowerCase();
-    renderMailList(lq ? sentEmailsData.filter(e => e.asunto.toLowerCase().includes(lq) || (e.destinatarios||[]).join(" ").toLowerCase().includes(lq)) : sentEmailsData);
+  function setMailFilter(filter) {
+    currentMailFilter = filter;
+    document.getElementById("tabTodos").classList.toggle("active", filter === 'all');
+    document.getElementById("tabSinResp").classList.toggle("active", filter === 'sinresponder');
+    filterMailList(document.getElementById("mailSearchInput").value, filter);
+  }
+
+  function filterMailList(q, filter) {
+    const lq = (q || "").toLowerCase();
+    let items = sentEmailsData;
+    if (filter === 'sinresponder') items = items.filter(e => !e.respondido);
+    if (lq) items = items.filter(e => e.asunto.toLowerCase().includes(lq) || (e.destinatarios||[]).join(" ").toLowerCase().includes(lq));
+    renderMailList(items);
   }
 
   function renderMailList(items) {
@@ -1094,8 +1904,10 @@
           <div class="mail-item-dest">${esc(dests)}</div>
           <div class="mail-item-foot">
             <span class="mail-item-date">${date}</span>
+            ${deliveryBadgeHtml(item.estado_entrega)}
+            ${item.respondido ? `<span class="reply-badge replied">&#10003; Respondió</span>` : ""}
             ${item.tipo==="programado"?`<span class="badge badge-prog">Prog.</span>`:""}
-            ${adj>0?`<span class="badge badge-adj">📎 ${adj}</span>`:""}
+            ${adj>0?`<span class="badge badge-adj">&#128206; ${adj}</span>`:""}
           </div>
         </div>`;
     }).join("");
@@ -1103,14 +1915,20 @@
 
   async function openMailItem(id) {
     selectedMailId = id;
-    const q = document.getElementById("mailSearchInput").value.toLowerCase();
-    renderMailList(q ? sentEmailsData.filter(e => e.asunto.toLowerCase().includes(q)||(e.destinatarios||[]).join(" ").toLowerCase().includes(q)) : sentEmailsData);
+    const q = document.getElementById("mailSearchInput").value;
+    filterMailList(q, currentMailFilter);
 
     document.getElementById("readingEmpty").style.display   = "none";
     document.getElementById("readingContent").style.display = "flex";
     document.getElementById("readingHeader").innerHTML = `<div style="color:var(--muted);font-size:12px;padding:4px 0">Cargando…</div>`;
     document.getElementById("readingAttachments").style.display = "none";
     document.getElementById("readingFrame").srcdoc = "";
+    document.getElementById("aiReadingBar").style.display  = "none";
+    document.getElementById("aiSuggestionPanel").style.display = "none";
+    // Mobile: abrir reading pane fullscreen
+    if (window.innerWidth <= 768) {
+      document.getElementById("mailReadingPane").classList.add("mobile-open");
+    }
 
     try {
       const res  = await fetch(`${WORKER_URL}/historial?id=${encodeURIComponent(id)}`, { headers: HEADERS });
@@ -1121,6 +1939,7 @@
 
       const date  = new Date(email.enviado_at).toLocaleDateString("es-AR", { weekday:"long", day:"numeric", month:"long", year:"numeric", hour:"2-digit", minute:"2-digit" });
       const dests = (email.destinatarios || []).join(", ");
+      const isResp = !!email.respondido;
 
       document.getElementById("readingHeader").innerHTML = `
         <div class="reading-subject">${esc(email.asunto)}</div>
@@ -1128,7 +1947,14 @@
           <div class="reading-meta-row"><span class="reading-meta-label">Para</span><span class="reading-meta-val">${esc(dests)}</span></div>
           <div class="reading-meta-row"><span class="reading-meta-label">Fecha</span><span class="reading-meta-val">${date}</span></div>
           <div class="reading-meta-row"><span class="reading-meta-label">Tipo</span><span class="reading-meta-val">${email.tipo==="programado"?"Programado":"Inmediato"}</span></div>
-        </div>`;
+          <div class="reading-meta-row"><span class="reading-meta-label">Estado</span><span class="reading-meta-val">${deliveryBadgeHtml(email.estado_entrega)}</span></div>
+        </div>
+        <button id="btnToggleResp" class="btn-respondido${isResp?' is-respondido':''}" onclick="toggleRespondido('${esc(email.id)}')">
+          ${isResp
+            ? `<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Respondido`
+            : `<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Marcar como respondido`
+          }
+        </button>`;
 
       const adjData = email.adjuntos_data || [], adjMeta = email.adjuntos_meta || [];
       if (adjData.length) {
@@ -1137,7 +1963,7 @@
         adjEl.innerHTML = `<span class="reading-adj-label">Adjuntos</span>` +
           adjData.map((a, i) => {
             const size = adjMeta[i] ? fmtSize(adjMeta[i].size||0) : "";
-            return `<div class="reading-adj-chip"><svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg><span>${esc(a.filename)}</span>${size?`<span class="reading-adj-size">${size}</span>`:""} ${a.content?`<button class="reading-adj-dl" onclick="downloadAttachment(${i})">⬇ Descargar</button>`:""}</div>`;
+            return `<div class="reading-adj-chip"><svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg><span>${esc(a.filename)}</span>${size?`<span class="reading-adj-size">${size}</span>`:""} ${a.content?`<button class="reading-adj-dl" onclick="downloadAttachment(${i})">&#11015; Descargar</button>`:""}</div>`;
           }).join("");
       }
 
@@ -1146,8 +1972,46 @@
         frame.srcdoc = email.cuerpo_html;
         frame.onload = () => { try { frame.style.height = Math.max(frame.contentDocument.body.scrollHeight + 32, 400) + "px"; } catch {} };
       }
+
+      // Mostrar barra de IA y back title (mobile)
+      document.getElementById("aiReadingBar").style.display = "flex";
+      if (window.innerWidth <= 768) {
+        document.getElementById("mobileBackTitle").textContent = email.asunto || "";
+      }
     } catch (err) {
-      document.getElementById("readingHeader").innerHTML = `<div style="color:#dc2626;font-size:13px">Error: ${esc(err.message)}</div>`;
+      document.getElementById("readingHeader").innerHTML = `<div style="color:var(--danger);font-size:13px">Error: ${esc(err.message)}</div>`;
+    }
+  }
+
+  async function toggleRespondido(id) {
+    const btn = document.getElementById("btnToggleResp");
+    if (!btn) return;
+    btn.classList.add("loading");
+    btn.disabled = true;
+    try {
+      const res  = await fetch(`${WORKER_URL}/historial/${encodeURIComponent(id)}`, { method: "PATCH", headers: HEADERS });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Error al actualizar");
+      const isResp = data.respondido;
+      // Update local data
+      const idx = sentEmailsData.findIndex(e => e.id === id);
+      if (idx !== -1) sentEmailsData[idx].respondido = isResp;
+      if (currentEmailDetail && currentEmailDetail.id === id) currentEmailDetail.respondido = isResp;
+      // Re-render button
+      btn.classList.toggle("is-respondido", isResp);
+      btn.classList.remove("loading");
+      btn.disabled = false;
+      btn.innerHTML = isResp
+        ? `<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Respondido`
+        : `<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Marcar como respondido`;
+      showToast(isResp ? "Marcado como respondido" : "Marcado como sin respuesta", "success");
+      // Refresh list to reflect badge change
+      const q = document.getElementById("mailSearchInput").value;
+      filterMailList(q, currentMailFilter);
+    } catch (err) {
+      showToast("Error: " + err.message, "error");
+      btn.classList.remove("loading");
+      btn.disabled = false;
     }
   }
 
@@ -1165,6 +2029,101 @@
     URL.revokeObjectURL(url);
   }
 
+  // ── Gemini AI — Redactar desde intención ────────────────────────────────────
+  function toggleAIPanel() {
+    const panel = document.getElementById("aiComposePanel");
+    panel.classList.toggle("open");
+    if (panel.classList.contains("open"))
+      document.getElementById("aiIntentionInput").focus();
+  }
+
+  async function geminiRedactar() {
+    const intencion = (document.getElementById("aiIntentionInput").value || "").trim();
+    if (!intencion) { showToast("Describí lo que querés transmitir", "error"); return; }
+    const btn = document.getElementById("aiGenerateBtn");
+    btn.disabled = true;
+    document.getElementById("aiGenText").style.display = "none";
+    document.getElementById("aiGenSpinner").style.display = "inline-block";
+    try {
+      const res = await fetch(`${WORKER_URL}/gemini/redactar`, {
+        method: "POST",
+        headers: { ...HEADERS, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          intencion,
+          destinatario: document.getElementById("toInput").value.trim(),
+          asunto: document.getElementById("subjectInput").value.trim()
+        })
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Error de Gemini");
+      if (data.asunto) document.getElementById("subjectInput").value = data.asunto;
+      if (data.cuerpo) document.getElementById("msgInput").value = data.cuerpo;
+      refreshPreview();
+      document.getElementById("aiComposePanel").classList.remove("open");
+      document.getElementById("aiIntentionInput").value = "";
+      showToast("Email generado con IA ✨", "success");
+    } catch (err) {
+      showToast("No se pudo generar el email. Intentá de nuevo.", "error");
+    } finally {
+      btn.disabled = false;
+      document.getElementById("aiGenText").style.display = "";
+      document.getElementById("aiGenSpinner").style.display = "none";
+    }
+  }
+
+  // ── Gemini AI — Sugerir respuesta ────────────────────────────────────────────
+  async function geminiSugerirRespuesta() {
+    if (!currentEmailDetail) return;
+    const btn    = document.getElementById("btnAISuggest");
+    const status = document.getElementById("aiSuggestStatus");
+    btn.disabled = true;
+    status.style.display = "inline";
+    document.getElementById("aiSuggestionPanel").style.display = "none";
+    try {
+      const res = await fetch(`${WORKER_URL}/gemini/sugerir-respuesta`, {
+        method: "POST",
+        headers: { ...HEADERS, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          asunto:        currentEmailDetail.asunto,
+          mensaje_texto: currentEmailDetail.mensaje_texto || "",
+          destinatario:  (currentEmailDetail.destinatarios || [])[0] || ""
+        })
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Error de Gemini");
+      document.getElementById("aiSuggestionText").value = data.sugerencia || "";
+      document.getElementById("aiSuggestionPanel").style.display = "flex";
+    } catch (err) {
+      showToast("No se pudo generar la sugerencia. Intentá de nuevo.", "error");
+    } finally {
+      btn.disabled = false;
+      status.style.display = "none";
+    }
+  }
+
+  function closeAISuggestion() {
+    document.getElementById("aiSuggestionPanel").style.display = "none";
+    document.getElementById("aiSuggestionText").value = "";
+  }
+
+  function applyAIReply() {
+    if (!currentEmailDetail) return;
+    const sugerencia = document.getElementById("aiSuggestionText").value;
+    const asunto = "Re: " + (currentEmailDetail.asunto || "");
+    const dest   = (currentEmailDetail.destinatarios || [])[0] || "";
+    switchView("compose");
+    document.getElementById("toInput").value      = dest;
+    document.getElementById("subjectInput").value = asunto;
+    document.getElementById("msgInput").value     = sugerencia;
+    refreshPreview();
+    showToast("Respuesta cargada en Redactar ✓", "success");
+  }
+
+  // ── Mobile: cerrar reading pane ───────────────────────────────────────────
+  function closeMobileReading() {
+    document.getElementById("mailReadingPane").classList.remove("mobile-open");
+  }
+
   // ── Helpers ─────────────────────────────────────────────────────────────────
   function clearForm() {
     toInput.value = "";
@@ -1173,25 +2132,9 @@
     selectedFiles = []; renderChips(); _buildPreview();
   }
 
-  let toastTimer;
-  function showToast(msg, type = "") {
-    const t = document.getElementById("toast");
-    t.textContent = msg; t.className = "show" + (type ? " " + type : "");
-    clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.className = ""; }, 3800);
-  }
-
-  function esc(s)     { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
-  function escHtml(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-  function fmtSize(b) { if (b<1024) return b+" B"; if (b<1048576) return (b/1024).toFixed(0)+" KB"; return (b/1048576).toFixed(1)+" MB"; }
-  function fmtDate(d) { return d.toLocaleDateString("es-AR",{weekday:"short",day:"numeric",month:"short"})+" "+d.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"}); }
-  function fmtScheduled(iso) { return new Date(iso).toLocaleDateString("es-AR",{weekday:"short",day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}); }
-
-  function fileIcon(name) {
-    const ext = name.split(".").pop().toLowerCase();
-    if (["jpg","jpeg","png","gif","webp"].includes(ext)) return `<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>`;
-    if (["xls","xlsx","csv"].includes(ext)) return `<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 17v-2m3 2v-4m3 4v-6M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>`;
-    return `<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>`;
-  }
+  // ── Init ─────────────────────────────────────────────────────────────────────
+  initDashHeader();
+  loadDashboard();
 
   // ── Service Worker ──────────────────────────────────────────────────────────
   if ('serviceWorker' in navigator) {
@@ -1203,8 +2146,7 @@
             if (sw.state === 'activated') showToast('App actualizada ✓', 'success');
           });
         });
-      })
-      .catch(e => console.warn('SW:', e));
+      }).catch(e => console.warn('SW:', e));
   }
 </script>
 </body>

@@ -1,5 +1,5 @@
 // Incrementar este número con cada deploy para forzar actualización
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4-pro';
 const CACHE_NAME    = `mailer-ml-${CACHE_VERSION}`;
 
 const STATIC_ASSETS = [
