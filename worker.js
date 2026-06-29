@@ -28,6 +28,7 @@ export default {
     if (request.method === "POST" && url.pathname === "/send")                  return handleSend(request, env);
     if (request.method === "POST" && url.pathname === "/schedule")              return handleSchedule(request, env);
     if (request.method === "GET"  && url.pathname === "/scheduled")             return handleListScheduled(env);
+    if (request.method === "GET"  && url.pathname === "/historial")             return handleHistorial(request, env);
     if (request.method === "DELETE" && url.pathname.startsWith("/scheduled/")) {
       const id = url.pathname.slice("/scheduled/".length);
       return handleCancelScheduled(id, env);
@@ -70,6 +71,8 @@ async function handleSend(request, env) {
   const attachments = await parseAttachments(formData);
   const resData = await sendViaResend({ to: destinatarios, subject, message, attachments }, env);
   saveContacts(env, destinatarios).catch(() => {});
+  saveEmailToSupabase({ to: destinatarios, subject, message, attachments, resendId: resData.id, tipo: "inmediato" }, env)
+    .catch(e => console.error("Supabase save:", e.message));
 
   return json({ ok: true, id: resData.id });
 }
@@ -172,6 +175,11 @@ async function processScheduledEmails(env) {
 
       await sendViaResend(data, env);
       saveContacts(env, Array.isArray(data.to) ? data.to : [data.to]).catch(() => {});
+      saveEmailToSupabase({
+        to: Array.isArray(data.to) ? data.to : [data.to],
+        subject: data.subject, message: data.message,
+        attachments: data.attachments || [], tipo: "programado"
+      }, env).catch(e => console.error("Supabase save:", e.message));
 
       data.status = "sent";
       data.sentAt = new Date().toISOString();
@@ -265,7 +273,7 @@ async function parseAttachments(formData) {
   for (const f of archivos) {
     if (!(f instanceof File) || f.size === 0) continue;
     const buf = await f.arrayBuffer();
-    result.push({ filename: f.name, content: arrayBufferToBase64(buf) });
+    result.push({ filename: f.name, content: arrayBufferToBase64(buf), size: buf.byteLength });
   }
   return result;
 }
@@ -286,6 +294,85 @@ function arrayBufferToBase64(buffer) {
   const bytes = new Uint8Array(buffer);
   for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
   return btoa(binary);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// SUPABASE: guardar email enviado
+// ─────────────────────────────────────────────────────────────────
+async function saveEmailToSupabase(data, env) {
+  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return;
+
+  const FROM_NAME  = env.FROM_NAME  || "Mercado Limpio";
+  const FROM_EMAIL = env.FROM_EMAIL || "proveedores@mercadolimpio.ar";
+  const attachments = data.attachments || [];
+
+  const record = {
+    destinatarios: Array.isArray(data.to) ? data.to : [data.to],
+    asunto:        data.subject,
+    mensaje_texto: data.message,
+    cuerpo_html:   buildEmailHtml(data.message, data.subject, FROM_NAME, FROM_EMAIL, attachments),
+    adjuntos_meta: attachments.map(a => ({ filename: a.filename, size: a.size || 0 })),
+    adjuntos_data: attachments.map(a => ({ filename: a.filename, content: a.content })),
+    resend_id:     data.resendId || null,
+    tipo:          data.tipo || "inmediato",
+    enviado_at:    new Date().toISOString(),
+  };
+
+  const res = await fetch(`${env.SUPABASE_URL}/rest/v1/emails_enviados`, {
+    method:  "POST",
+    headers: {
+      "Content-Type":  "application/json",
+      "apikey":        env.SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${env.SUPABASE_ANON_KEY}`,
+      "Prefer":        "return=minimal",
+    },
+    body: JSON.stringify(record),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Supabase ${res.status}: ${text}`);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// HISTORIAL: listar / detalle desde Supabase
+// ─────────────────────────────────────────────────────────────────
+async function handleHistorial(request, env) {
+  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY)
+    return json({ ok: false, error: "Supabase no configurado" }, 503);
+
+  const url    = new URL(request.url);
+  const id     = url.searchParams.get("id");
+
+  let supaUrl;
+  if (id) {
+    supaUrl = `${env.SUPABASE_URL}/rest/v1/emails_enviados?id=eq.${encodeURIComponent(id)}&select=*&limit=1`;
+  } else {
+    const limit  = Math.min(parseInt(url.searchParams.get("limit")  || "100"), 500);
+    const offset = parseInt(url.searchParams.get("offset") || "0");
+    supaUrl = `${env.SUPABASE_URL}/rest/v1/emails_enviados`
+            + `?select=id,destinatarios,asunto,tipo,enviado_at,resend_id,adjuntos_meta`
+            + `&order=enviado_at.desc&limit=${limit}&offset=${offset}`;
+  }
+
+  const res = await fetch(supaUrl, {
+    headers: {
+      "apikey":        env.SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${env.SUPABASE_ANON_KEY}`,
+      "Accept":        "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    return json({ ok: false, error: `Supabase ${res.status}: ${text}` }, res.status);
+  }
+
+  const data = await res.json();
+  return id
+    ? json({ ok: true, email: data[0] || null })
+    : json({ ok: true, emails: data });
 }
 
 // ─────────────────────────────────────────────────────────────────

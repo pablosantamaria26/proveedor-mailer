@@ -4,12 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Mailer · Mercado Limpio</title>
-
-  <!-- PWA -->
   <link rel="manifest" href="/proveedor-mailer/manifest.json">
   <meta name="theme-color" content="#0f1b35">
-
-  <!-- iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Mailer ML">
@@ -20,104 +16,138 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --navy:    #0f1b35;
-      --navy2:   #1e3a6e;
-      --gold:    #c9a558;
-      --gold2:   #a8883c;
-      --cream:   #f0ede8;
-      --cream2:  #faf8f5;
-      --border:  #e8e0d0;
-      --text:    #2d3748;
-      --muted:   #8a7a5a;
-      --white:   #ffffff;
-      --radius:  4px;
+      --navy:   #0f1b35;
+      --navy2:  #1e3a6e;
+      --gold:   #c9a558;
+      --gold2:  #a8883c;
+      --cream:  #f0ede8;
+      --cream2: #faf8f5;
+      --border: #e8e0d0;
+      --text:   #2d3748;
+      --muted:  #8a7a5a;
+      --white:  #ffffff;
+      --radius: 4px;
+      --sidebar-w: 210px;
     }
 
-    html, body {
-      height: 100%;
-      background: var(--cream);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      color: var(--text);
-    }
+    html, body { height: 100%; background: var(--cream); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--text); overflow: hidden; }
 
-    /* ── Layout global ── */
-    .app { display: flex; flex-direction: column; min-height: 100vh; }
+    .app { display: flex; flex-direction: column; height: 100vh; }
 
     /* ── Topbar ── */
     .topbar {
       background: var(--navy);
-      padding: 0 28px;
-      height: 58px;
+      height: 52px;
+      padding: 0 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-shrink: 0;
       border-bottom: 2px solid var(--gold);
+      z-index: 20;
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 12px; }
+    .topbar-logo  { height: 30px; filter: brightness(0) invert(1); opacity: .9; }
+    .topbar-divider { width: 1px; height: 20px; background: rgba(255,255,255,.15); }
+    .topbar-title { font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .topbar-meta  { font-size: 11px; color: rgba(255,255,255,.3); }
+
+    /* ── Workspace ── */
+    .workspace { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--navy);
+      border-right: 1px solid rgba(255,255,255,.07);
+      display: flex;
+      flex-direction: column;
     }
 
-    .topbar-brand { display: flex; align-items: center; gap: 14px; }
-
-    .topbar-logo {
-      height: 34px;
-      width: auto;
-      filter: brightness(0) invert(1);
-      opacity: .92;
-    }
-
-    .topbar-divider { width: 1px; height: 22px; background: rgba(255,255,255,.15); }
-
-    .topbar-title {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 2.5px;
+    .sidebar-section {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      color: var(--gold);
+      color: rgba(255,255,255,.22);
+      padding: 18px 18px 6px;
     }
 
-    .topbar-right { display: flex; align-items: center; gap: 14px; }
-
-    .topbar-meta { font-size: 11px; color: rgba(255,255,255,.35); letter-spacing: .5px; }
-
-    /* Botón programados en topbar */
-    .btn-scheduled {
+    .nav-item {
       display: flex;
       align-items: center;
-      gap: 7px;
-      padding: 6px 13px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.13);
-      border-radius: 5px;
-      cursor: pointer;
-      color: rgba(255,255,255,.6);
-      font-size: 12px;
+      gap: 10px;
+      padding: 10px 18px;
       font-family: inherit;
-      letter-spacing: .3px;
-      transition: all .15s;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,.5);
+      background: none;
+      border: none;
+      text-align: left;
+      width: 100%;
+      cursor: pointer;
+      transition: all .14s;
+      border-left: 3px solid transparent;
+      position: relative;
     }
 
-    .btn-scheduled:hover { background: rgba(255,255,255,.14); color: var(--white); border-color: rgba(255,255,255,.25); }
+    .nav-item:hover { color: rgba(255,255,255,.82); background: rgba(255,255,255,.05); }
 
-    .sched-badge {
+    .nav-item.active {
+      color: var(--white);
+      background: rgba(201,165,88,.13);
+      border-left-color: var(--gold);
+      padding-left: 15px;
+    }
+
+    .nav-badge {
+      margin-left: auto;
       background: var(--gold);
       color: var(--navy);
       font-size: 9px;
       font-weight: 800;
       border-radius: 10px;
-      padding: 2px 7px;
+      padding: 2px 6px;
       min-width: 18px;
       text-align: center;
-      display: none;
       line-height: 14px;
+      display: none;
+    }
+    .nav-badge.visible { display: inline-block; }
+
+    .nav-divider { height: 1px; background: rgba(255,255,255,.07); margin: 6px 0; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 14px 18px;
+      border-top: 1px solid rgba(255,255,255,.07);
     }
 
-    .sched-badge.visible { display: inline-block; }
+    .sidebar-from {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      color: rgba(255,255,255,.28);
+    }
 
-    /* ── Contenido ── */
-    .content { flex: 1; display: flex; overflow: hidden; }
+    .sidebar-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; flex-shrink: 0; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
 
-    /* ── Panel izquierdo: formulario ── */
+    /* ── Main content ── */
+    .main-content { flex: 1; overflow: hidden; display: flex; }
+
+    .view { display: none; flex: 1; overflow: hidden; }
+    .view.active { display: flex; }
+
+    /* ══════════════════════════════════════════════
+       COMPOSE VIEW
+    ══════════════════════════════════════════════ */
     .compose-panel {
-      width: 420px;
+      width: 400px;
       flex-shrink: 0;
       background: var(--white);
       border-right: 1px solid var(--border);
@@ -126,545 +156,366 @@
       overflow-y: auto;
     }
 
-    .compose-header { padding: 24px 28px 18px; border-bottom: 1px solid var(--border); }
-    .compose-header h2 { font-size: 15px; font-weight: 600; color: var(--navy); letter-spacing: .3px; }
-    .compose-header p { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .compose-header { padding: 20px 24px 14px; border-bottom: 1px solid var(--border); }
+    .compose-header h2 { font-size: 14px; font-weight: 600; color: var(--navy); }
+    .compose-header p  { font-size: 12px; color: var(--muted); margin-top: 3px; }
 
-    /* Campos */
     .field {
-      padding: 0 28px;
+      padding: 0 24px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: 10px;
       position: relative;
     }
 
     .field label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding-top: 17px;
-      width: 56px;
-      flex-shrink: 0;
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--muted); padding-top: 14px; width: 52px; flex-shrink: 0;
     }
 
     .field input, .field textarea {
-      flex: 1;
-      border: none;
-      outline: none;
-      font-size: 14px;
-      color: var(--navy);
-      background: transparent;
-      font-family: inherit;
-      padding: 14px 0;
-      line-height: 1.5;
+      flex: 1; border: none; outline: none; font-size: 13.5px; color: var(--navy);
+      background: transparent; font-family: inherit; padding: 13px 0; line-height: 1.5;
     }
 
-    .field textarea { resize: none; min-height: 200px; font-size: 14px; }
+    .field textarea { resize: none; min-height: 200px; }
     .field input::placeholder, .field textarea::placeholder { color: #c0b89e; }
-    .field input:focus, .field textarea:focus { background: #fdfcfa; }
 
-    /* Autocomplete */
     .ac-list {
-      position: absolute;
-      top: 100%; left: 0; right: 0;
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-top: none;
-      box-shadow: 0 8px 28px rgba(15,27,53,.12);
-      z-index: 100;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: var(--white); border: 1px solid var(--border); border-top: none;
+      box-shadow: 0 8px 28px rgba(15,27,53,.12); z-index: 100;
+      max-height: 200px; overflow-y: auto; display: none;
     }
-
     .ac-list.open { display: block; }
-
-    .ac-item {
-      padding: 11px 28px;
-      font-size: 13px;
-      color: var(--text);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
+    .ac-item { padding: 10px 24px; font-size: 13px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 10px; }
     .ac-item:hover, .ac-item.active { background: var(--cream2); }
-    .ac-item svg { color: var(--muted); flex-shrink: 0; }
 
-    /* Adjuntos */
-    .attach-zone { padding: 16px 28px; border-bottom: 1px solid var(--border); }
-
-    .attach-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-
+    .attach-zone { padding: 13px 24px; border-bottom: 1px solid var(--border); }
+    .attach-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
     .attach-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px 14px;
-      border: 1.5px dashed var(--border);
-      border-radius: var(--radius);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .5px;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all .15s;
+      display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px;
+      border: 1.5px dashed var(--border); border-radius: var(--radius); font-size: 12px;
+      font-weight: 600; color: var(--muted); cursor: pointer; transition: all .15s;
     }
-
     .attach-btn:hover { border-color: var(--gold); color: var(--gold2); background: #fdf9f0; }
-
     #fileInput { display: none; }
 
     .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
-
     .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px 4px 8px;
-      background: var(--cream2);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      font-size: 11px;
-      color: var(--navy);
-      max-width: 200px;
+      display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 8px;
+      background: var(--cream2); border: 1px solid var(--border); border-radius: 3px;
+      font-size: 11px; color: var(--navy); max-width: 200px;
     }
-
     .chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .chip-size { color: var(--muted); flex-shrink: 0; }
     .chip-rm   { cursor: pointer; color: var(--muted); padding: 1px; border-radius: 2px; flex-shrink: 0; }
     .chip-rm:hover { color: #c0392b; background: #fde8e8; }
 
-    /* ── Footer del compose ── */
     .compose-footer {
-      padding: 18px 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: var(--cream2);
-      border-top: 1px solid var(--border);
-      margin-top: auto;
+      padding: 13px 24px; display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; background: var(--cream2); border-top: 1px solid var(--border); margin-top: auto;
     }
+    .from-badge { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); }
+    .from-dot   { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; }
 
-    .from-badge { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); }
-    .from-dot   { width: 7px; height: 7px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
-
-    /* ── Split send button ── */
     .btn-send-wrap { display: flex; align-items: stretch; flex-shrink: 0; position: relative; }
-
     .btn-send {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 11px 22px;
-      background: var(--navy);
-      color: var(--white);
-      border: none;
-      border-radius: var(--radius) 0 0 var(--radius);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background .15s, transform .1s;
-      flex-shrink: 0;
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
+      background: var(--navy); color: var(--white); border: none;
+      border-radius: var(--radius) 0 0 var(--radius); font-size: 12px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: background .15s, transform .1s;
     }
-
     .btn-send:hover:not(:disabled) { background: var(--navy2); }
     .btn-send:active:not(:disabled) { transform: scale(.97); }
     .btn-send:disabled { opacity: .5; cursor: not-allowed; }
-
-    .btn-send .gold-bar {
-      width: 14px; height: 2px;
-      background: var(--gold);
-      border-radius: 1px;
-      transition: width .2s;
-    }
+    .btn-send .gold-bar { width: 14px; height: 2px; background: var(--gold); border-radius: 1px; transition: width .2s; }
     .btn-send:hover:not(:disabled) .gold-bar { width: 20px; }
 
     .spinner {
-      width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,.3);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      display: none;
+      width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3);
+      border-top-color: var(--gold); border-radius: 50%;
+      animation: spin .7s linear infinite; display: none;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Flecha del split button */
     .btn-arrow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 11px;
-      background: var(--navy);
-      color: var(--white);
-      border: none;
+      display: flex; align-items: center; justify-content: center; padding: 0 10px;
+      background: var(--navy); color: var(--white); border: none;
       border-left: 1px solid rgba(255,255,255,.18);
-      border-radius: 0 var(--radius) var(--radius) 0;
-      cursor: pointer;
-      transition: background .15s;
-      flex-shrink: 0;
+      border-radius: 0 var(--radius) var(--radius) 0; cursor: pointer; transition: background .15s;
     }
-
     .btn-arrow:hover { background: var(--navy2); }
 
-    /* Menú desplegable */
     .sched-dropdown {
-      position: absolute;
-      bottom: calc(100% + 8px);
-      right: 0;
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      box-shadow: 0 8px 32px rgba(15,27,53,.16);
-      min-width: 210px;
-      z-index: 300;
-      overflow: hidden;
-      display: none;
-      animation: dropUp .14s ease;
+      position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--white);
+      border: 1px solid var(--border); border-radius: 7px; box-shadow: 0 8px 32px rgba(15,27,53,.16);
+      min-width: 200px; z-index: 300; overflow: hidden; display: none; animation: dropUp .14s ease;
     }
-
     .sched-dropdown.open { display: block; }
-
-    @keyframes dropUp {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes dropUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
     .dropdown-item {
-      padding: 12px 18px;
-      font-size: 13px;
-      color: var(--text);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: background .1s;
-      font-family: inherit;
-      background: none;
-      border: none;
-      width: 100%;
-      text-align: left;
+      padding: 11px 16px; font-size: 13px; color: var(--text); cursor: pointer;
+      display: flex; align-items: center; gap: 10px; transition: background .1s;
+      font-family: inherit; background: none; border: none; width: 100%; text-align: left;
     }
-
     .dropdown-item:hover { background: var(--cream2); }
-    .dropdown-item svg   { color: var(--muted); flex-shrink: 0; }
 
-    /* ── Panel derecho: preview ── */
     .preview-panel { flex: 1; display: flex; flex-direction: column; background: var(--cream); overflow: hidden; }
 
     .preview-header {
-      padding: 16px 28px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid var(--border);
-      background: var(--cream2);
-      flex-shrink: 0;
+      padding: 13px 24px; display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--border); background: var(--cream2); flex-shrink: 0;
     }
+    .preview-header span { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+    .live-dot   { width: 7px; height: 7px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; margin-left: auto; }
+    .live-label { font-size: 10px; color: #22c55e; letter-spacing: 1.5px; text-transform: uppercase; }
 
-    .preview-header svg   { color: var(--muted); }
-    .preview-header span  { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
-    .preview-header .live-dot { width: 7px; height: 7px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; margin-left: auto; }
-
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
-
-    .preview-header .live-label { font-size: 10px; color: #22c55e; letter-spacing: 1.5px; text-transform: uppercase; }
-
-    .preview-frame-wrap { flex: 1; padding: 24px; overflow-y: auto; }
-    .preview-shadow { max-width: 640px; margin: 0 auto; box-shadow: 0 8px 40px rgba(15,27,53,.15); border-radius: 2px; overflow: hidden; }
+    .preview-frame-wrap { flex: 1; padding: 20px; overflow-y: auto; }
+    .preview-shadow { max-width: 620px; margin: 0 auto; box-shadow: 0 8px 40px rgba(15,27,53,.15); border-radius: 2px; overflow: hidden; }
     #previewFrame { width: 100%; border: none; display: block; min-height: 500px; }
 
-    /* ── Toast ── */
-    #toast {
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%) translateY(16px);
-      background: var(--navy);
-      color: var(--white);
-      padding: 13px 22px;
-      border-left: 3px solid var(--gold);
-      font-size: 13px;
-      font-weight: 500;
-      box-shadow: 0 4px 20px rgba(0,0,0,.2);
-      opacity: 0;
-      transition: opacity .25s, transform .25s;
-      z-index: 999;
-      pointer-events: none;
-      white-space: nowrap;
+    /* ══════════════════════════════════════════════
+       SENT VIEW
+    ══════════════════════════════════════════════ */
+    .mail-list-pane {
+      width: 320px; flex-shrink: 0; background: var(--white);
+      border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden;
     }
 
+    .mail-pane-header {
+      padding: 14px 18px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .mail-pane-header h3 { font-size: 14px; font-weight: 700; color: var(--navy); }
+    .mail-pane-count { font-size: 11px; color: var(--muted); }
+
+    .mail-search-wrap { padding: 9px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .mail-search-input {
+      width: 100%; padding: 7px 12px; border: 1.5px solid var(--border);
+      border-radius: var(--radius); font-size: 12px; color: var(--navy); font-family: inherit;
+      background: var(--cream2); outline: none; transition: border-color .15s;
+    }
+    .mail-search-input:focus { border-color: var(--navy2); background: var(--white); }
+
+    .mail-list-body { flex: 1; overflow-y: auto; }
+
+    .mail-item {
+      padding: 11px 16px; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background .12s; border-left: 3px solid transparent;
+    }
+    .mail-item:hover { background: var(--cream2); }
+    .mail-item.selected { background: #eef2fb; border-left-color: var(--navy2); padding-left: 13px; }
+    .mail-item:last-child { border-bottom: none; }
+
+    .mail-item-subject { font-size: 13px; font-weight: 600; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
+    .mail-item-dest    { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+    .mail-item-foot    { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .mail-item-date    { font-size: 10px; color: var(--muted); }
+
+    .badge { font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 3px; }
+    .badge-prog { background: #e8f0fe; color: #1a56db; border: 1px solid #c5d4f8; }
+    .badge-adj  { background: var(--cream); color: var(--muted); border: 1px solid var(--border); }
+
+    .mail-empty { padding: 48px 20px; text-align: center; color: var(--muted); }
+    .mail-empty svg { display: block; margin: 0 auto 14px; opacity: .3; }
+    .mail-empty p { font-size: 13px; }
+
+    /* Reading pane */
+    .mail-reading-pane { flex: 1; display: flex; flex-direction: column; background: var(--cream); overflow: hidden; }
+
+    .reading-empty {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: var(--muted); text-align: center; padding: 24px;
+    }
+    .reading-empty svg { opacity: .18; margin-bottom: 18px; }
+    .reading-empty p   { font-size: 14px; font-weight: 300; }
+
+    .reading-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    .reading-header {
+      padding: 16px 24px 14px; border-bottom: 1px solid var(--border);
+      background: var(--white); flex-shrink: 0;
+    }
+    .reading-subject { font-size: 17px; font-weight: 300; color: var(--navy); margin-bottom: 10px; line-height: 1.35; }
+    .reading-meta    { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+    .reading-meta-row { display: flex; gap: 7px; font-size: 12px; }
+    .reading-meta-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); padding-top: 1px; }
+    .reading-meta-val   { color: var(--text); }
+
+    .reading-attachments {
+      padding: 9px 24px; background: var(--cream2); border-bottom: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; align-items: center; gap: 7px; flex-shrink: 0;
+    }
+    .reading-adj-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    .reading-adj-chip {
+      display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
+      background: var(--white); border: 1px solid var(--border); border-radius: 4px;
+      font-size: 11px; color: var(--navy);
+    }
+    .reading-adj-chip svg { color: var(--muted); flex-shrink: 0; }
+    .reading-adj-size { color: var(--muted); }
+    .reading-adj-dl {
+      padding: 2px 8px; border: 1px solid var(--gold); border-radius: 3px;
+      background: none; color: var(--gold2); font-size: 10px; font-weight: 700;
+      font-family: inherit; cursor: pointer; transition: all .15s;
+    }
+    .reading-adj-dl:hover { background: #fdf8ee; }
+
+    .reading-iframe-wrap { flex: 1; overflow-y: auto; padding: 18px 24px; }
+    .reading-iframe-shadow { max-width: 620px; margin: 0 auto; box-shadow: 0 4px 24px rgba(15,27,53,.10); }
+    #readingFrame { width: 100%; border: none; display: block; min-height: 400px; }
+
+    /* ══════════════════════════════════════════════
+       SCHEDULED VIEW
+    ══════════════════════════════════════════════ */
+    .sched-view-pane { flex: 1; display: flex; flex-direction: column; background: var(--cream2); overflow: hidden; }
+
+    .sched-view-top {
+      padding: 16px 24px 12px; border-bottom: 1px solid var(--border); background: var(--white); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .sched-view-top h3 { font-size: 15px; font-weight: 700; color: var(--navy); }
+    .sched-view-top p  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    .sched-view-list { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+
+    .sched-card {
+      background: var(--white); border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; display: flex; align-items: center; gap: 16px;
+      transition: box-shadow .15s;
+    }
+    .sched-card:hover { box-shadow: 0 2px 14px rgba(15,27,53,.08); }
+
+    .sched-card-icon {
+      width: 42px; height: 42px; background: rgba(201,165,88,.1); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gold2);
+    }
+
+    .sched-card-info { flex: 1; min-width: 0; }
+    .sched-card-subject { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sched-card-to      { font-size: 12px; color: var(--muted); margin-bottom: 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sched-card-when    {
+      display: inline-flex; align-items: center; gap: 5px; font-size: 11px;
+      color: var(--gold2); background: rgba(201,165,88,.08); border: 1px solid rgba(201,165,88,.25);
+      border-radius: 4px; padding: 3px 9px;
+    }
+
+    .sched-card-empty {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; color: var(--muted); padding: 60px 24px;
+    }
+    .sched-card-empty svg { opacity: .25; margin-bottom: 18px; }
+    .sched-card-empty h4  { font-size: 15px; font-weight: 300; color: var(--navy); margin-bottom: 6px; }
+    .sched-card-empty p   { font-size: 12px; }
+
+    .btn-cancel {
+      flex-shrink: 0; padding: 6px 13px; border: 1.5px solid #fca5a5; border-radius: var(--radius);
+      background: var(--white); color: #dc2626; font-size: 11px; font-weight: 700;
+      font-family: inherit; cursor: pointer; transition: all .15s;
+    }
+    .btn-cancel:hover { background: #fef2f2; border-color: #ef4444; }
+
+    /* ══════════════════════════════════════════════
+       MODALS
+    ══════════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(10,18,36,.55);
+      display: flex; align-items: center; justify-content: center; z-index: 500;
+      opacity: 0; pointer-events: none; transition: opacity .2s; padding: 16px;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .modal-box {
+      background: var(--white); border-radius: 10px; width: 400px; max-width: 100%;
+      box-shadow: 0 24px 64px rgba(10,18,36,.28); overflow: hidden;
+      transform: translateY(10px) scale(.98); transition: transform .2s;
+    }
+    .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+
+    .modal-header {
+      padding: 16px 22px 14px; display: flex; align-items: center;
+      justify-content: space-between; border-bottom: 1px solid var(--border);
+    }
+    .modal-header h3 { font-size: 14px; font-weight: 700; color: var(--navy); }
+
+    .modal-close {
+      background: none; border: none; cursor: pointer; color: var(--muted); padding: 5px;
+      border-radius: 5px; display: flex; align-items: center; transition: all .15s;
+    }
+    .modal-close:hover { background: var(--cream); color: var(--navy); }
+
+    .modal-body { padding: 16px 22px; }
+    .modal-hint { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+
+    .quick-opts { display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
+    .quick-opt {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      background: var(--cream2); border: 1.5px solid var(--border); border-radius: 7px;
+      cursor: pointer; font-family: inherit; font-size: 13px; color: var(--navy);
+      transition: all .15s; width: 100%; text-align: left;
+    }
+    .quick-opt:hover { border-color: var(--gold); background: #fdf8ee; }
+    .quick-opt .opt-label { flex: 1; font-weight: 600; }
+    .quick-opt .opt-when  { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+    .or-divider {
+      display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--muted);
+      letter-spacing: 1px; text-transform: uppercase; margin: 4px 0 14px;
+    }
+    .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .dt-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .dt-field { display: flex; flex-direction: column; gap: 5px; }
+    .dt-field label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+    .dt-field input {
+      padding: 9px 11px; border: 1.5px solid var(--border); border-radius: var(--radius);
+      font-size: 13px; color: var(--navy); font-family: inherit; background: var(--white); outline: none;
+    }
+    .dt-field input:focus { border-color: var(--navy2); }
+
+    .modal-footer {
+      padding: 12px 22px; display: flex; gap: 10px; justify-content: flex-end;
+      border-top: 1px solid var(--border); background: var(--cream2);
+    }
+
+    .btn-ghost {
+      padding: 8px 16px; border: 1.5px solid var(--border); border-radius: var(--radius);
+      background: var(--white); color: var(--text); font-size: 13px; font-weight: 600;
+      font-family: inherit; cursor: pointer; transition: all .15s;
+    }
+    .btn-ghost:hover { border-color: var(--navy); color: var(--navy); }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 7px; padding: 8px 18px;
+      background: var(--navy); color: var(--white); border: none; border-radius: var(--radius);
+      font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: background .15s;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--navy2); }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* Toast */
+    #toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(16px);
+      background: var(--navy); color: var(--white); padding: 12px 20px; border-left: 3px solid var(--gold);
+      font-size: 13px; font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,.2); opacity: 0;
+      transition: opacity .25s, transform .25s; z-index: 999; pointer-events: none; white-space: nowrap;
+    }
     #toast.show    { opacity: 1; transform: translateX(-50%) translateY(0); }
     #toast.success { border-color: #22c55e; }
     #toast.error   { border-color: #e53e3e; }
 
-    /* ── Modal base ── */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(10,18,36,.55);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 500;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .2s;
-      padding: 16px;
-    }
-
-    .modal-overlay.open { opacity: 1; pointer-events: auto; }
-
-    .modal-box {
-      background: var(--white);
-      border-radius: 10px;
-      width: 400px;
-      max-width: 100%;
-      box-shadow: 0 24px 64px rgba(10,18,36,.28);
-      overflow: hidden;
-      transform: translateY(10px) scale(.98);
-      transition: transform .2s;
-    }
-
-    .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
-
-    .modal-header {
-      padding: 20px 24px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .modal-header h3 { font-size: 15px; font-weight: 700; color: var(--navy); }
-
-    .modal-close {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--muted);
-      padding: 5px;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all .15s;
-    }
-
-    .modal-close:hover { background: var(--cream); color: var(--navy); }
-
-    .modal-body { padding: 20px 24px; }
-
-    .modal-hint { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
-
-    /* Opciones rápidas */
-    .quick-opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-
-    .quick-opt {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      padding: 12px 15px;
-      background: var(--cream2);
-      border: 1.5px solid var(--border);
-      border-radius: 7px;
-      cursor: pointer;
-      text-align: left;
-      font-family: inherit;
-      font-size: 13px;
-      color: var(--navy);
-      transition: all .15s;
-      width: 100%;
-    }
-
-    .quick-opt:hover { border-color: var(--gold); background: #fdf8ee; }
-
-    .quick-opt .opt-label { flex: 1; font-weight: 600; }
-
-    .quick-opt .opt-when {
-      font-size: 11px;
-      color: var(--muted);
-      white-space: nowrap;
-      font-weight: 400;
-    }
-
-    /* Divisor "o" */
-    .or-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin: 4px 0 18px;
-    }
-
-    .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-    /* Picker custom */
-    .dt-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-    .dt-field { display: flex; flex-direction: column; gap: 6px; }
-
-    .dt-field label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .dt-field input {
-      padding: 10px 12px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 13px;
-      color: var(--navy);
-      font-family: inherit;
-      background: var(--white);
-      outline: none;
-      transition: border-color .15s;
-    }
-
-    .dt-field input:focus { border-color: var(--navy2); }
-
-    .modal-footer {
-      padding: 16px 24px;
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      border-top: 1px solid var(--border);
-      background: var(--cream2);
-    }
-
-    .btn-ghost {
-      padding: 9px 18px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--white);
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all .15s;
-    }
-
-    .btn-ghost:hover { border-color: var(--navy); color: var(--navy); }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 9px 20px;
-      background: var(--navy);
-      color: var(--white);
-      border: none;
-      border-radius: var(--radius);
-      font-size: 13px;
-      font-weight: 700;
-      font-family: inherit;
-      letter-spacing: .5px;
-      cursor: pointer;
-      transition: background .15s;
-    }
-
-    .btn-primary:hover:not(:disabled) { background: var(--navy2); }
-    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
-
-    /* Panel programados (modal más ancho) */
-    .modal-box-wide { width: 500px; }
-
-    .sched-list-wrap { max-height: 52vh; overflow-y: auto; }
-
-    .sched-item {
-      padding: 15px 24px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .sched-item:last-child { border-bottom: none; }
-
-    .sched-item-info { flex: 1; min-width: 0; }
-
-    .sched-item-subject {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--navy);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .sched-item-meta {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 3px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .sched-item-meta .clock-icon { vertical-align: -1px; margin-right: 4px; }
-
-    .btn-cancel-sched {
-      flex-shrink: 0;
-      padding: 6px 13px;
-      border: 1.5px solid #fca5a5;
-      border-radius: var(--radius);
-      background: var(--white);
-      color: #dc2626;
-      font-size: 11px;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      letter-spacing: .3px;
-      transition: all .15s;
-    }
-
-    .btn-cancel-sched:hover { background: #fef2f2; border-color: #ef4444; }
-
-    .sched-empty {
-      padding: 40px 24px;
-      text-align: center;
-      color: var(--muted);
-    }
-
-    .sched-empty svg { display: block; margin: 0 auto 14px; opacity: .35; }
-    .sched-empty p   { font-size: 13px; }
-
-    .sched-footer-note { font-size: 11px; color: var(--muted); flex: 1; }
-
     /* ── Mobile ── */
     @media (max-width: 768px) {
-      .content { flex-direction: column; overflow: visible; }
-      .compose-panel { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
+      .sidebar { display: none; }
+      .compose-panel { width: 100%; border-right: none; }
+      #view-compose.active { flex-direction: column; }
       .preview-panel { display: none; }
-      .topbar { padding: 0 16px; }
-      .topbar-meta { display: none; }
-      .field { padding: 0 16px; }
-      .attach-zone, .compose-footer { padding: 14px 16px; }
-      .compose-header { padding: 18px 16px 14px; }
+      .mail-list-pane { width: 100%; }
+      .mail-reading-pane { display: none; }
+      #view-sent.active { flex-direction: column; }
     }
   </style>
 </head>
@@ -679,131 +530,217 @@
       <span class="topbar-title">Comunicaciones</span>
     </div>
     <div class="topbar-right">
-      <button class="btn-scheduled" id="btnScheduledCount" onclick="openScheduledPanel()">
-        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-        </svg>
-        Programados
-        <span class="sched-badge" id="schedBadge">0</span>
-      </button>
       <span class="topbar-meta">proveedores@mercadolimpio.ar</span>
     </div>
   </header>
 
-  <div class="content">
+  <div class="workspace">
 
-    <!-- Panel izquierdo: Formulario -->
-    <aside class="compose-panel">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-section">Correos</div>
 
-      <div class="compose-header">
-        <h2>Nuevo mensaje</h2>
-        <p>El proveedor recibirá una comunicación oficial de Mercado Limpio</p>
-      </div>
+      <button class="nav-item active" data-view="compose" onclick="switchView('compose')">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+        </svg>
+        Redactar
+      </button>
 
-      <!-- Para -->
-      <div class="field" id="toField">
-        <label for="toInput">Para</label>
-        <input id="toInput" type="email" inputmode="email"
-          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-          placeholder="email@proveedor.com">
-        <div class="ac-list" id="acList"></div>
-      </div>
+      <button class="nav-item" data-view="sent" onclick="switchView('sent')">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        Enviados
+        <span class="nav-badge" id="sentBadge"></span>
+      </button>
 
-      <!-- Asunto -->
-      <div class="field">
-        <label for="subjectInput">Asunto</label>
-        <input id="subjectInput" type="text" autocomplete="off"
-          placeholder="Pedido · Lista de precios · Consulta">
-      </div>
+      <div class="nav-divider"></div>
 
-      <!-- Mensaje -->
-      <div class="field" style="border-bottom:none">
-        <label for="msgInput" style="padding-top:16px">Mensaje</label>
-        <textarea id="msgInput"
-          placeholder="Estimados,&#10;&#10;Me dirijo a ustedes..."
-          spellcheck="true"></textarea>
-      </div>
+      <button class="nav-item" data-view="scheduled" onclick="switchView('scheduled')">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Programados
+        <span class="nav-badge" id="schedBadge"></span>
+      </button>
 
-      <!-- Adjuntos -->
-      <div class="attach-zone">
-        <div class="attach-label">Adjuntos</div>
-        <label class="attach-btn" for="fileInput">
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586
-                 a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-          </svg>
-          Adjuntar archivo
-        </label>
-        <input type="file" id="fileInput" multiple
-          accept=".pdf,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp,.csv,.txt,.zip,.doc,.docx">
-        <div class="chips" id="chipsContainer"></div>
-      </div>
-
-      <!-- Footer: split button enviar / programar -->
-      <div class="compose-footer">
-        <div class="from-badge">
-          <div class="from-dot"></div>
+      <div class="sidebar-footer">
+        <div class="sidebar-from">
+          <div class="sidebar-dot"></div>
           <span>proveedores@mercadolimpio.ar</span>
         </div>
+      </div>
+    </nav>
 
-        <div class="btn-send-wrap">
-          <!-- Botón principal: envío inmediato -->
-          <button class="btn-send" id="sendBtn" onclick="sendEmail()">
-            <span id="btnText">Enviar</span>
-            <div class="spinner" id="spinner"></div>
-            <div class="gold-bar"></div>
-          </button>
-          <!-- Flecha: despliega menu -->
-          <button class="btn-arrow" id="arrowBtn" onclick="toggleDropdown(event)" aria-label="Más opciones de envío">
-            <svg width="9" height="9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </button>
-          <!-- Dropdown -->
-          <div class="sched-dropdown" id="schedDropdown">
-            <button class="dropdown-item" onclick="openScheduleModal()">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    <!-- Main content -->
+    <div class="main-content">
+
+      <!-- VIEW: Redactar -->
+      <div id="view-compose" class="view active">
+        <aside class="compose-panel">
+          <div class="compose-header">
+            <h2>Nuevo mensaje</h2>
+            <p>El proveedor recibirá una comunicación oficial de Mercado Limpio</p>
+          </div>
+
+          <div class="field" id="toField">
+            <label for="toInput">Para</label>
+            <input id="toInput" type="email" inputmode="email"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+              placeholder="email@proveedor.com">
+            <div class="ac-list" id="acList"></div>
+          </div>
+
+          <div class="field">
+            <label for="subjectInput">Asunto</label>
+            <input id="subjectInput" type="text" autocomplete="off"
+              placeholder="Pedido · Lista de precios · Consulta">
+          </div>
+
+          <div class="field" style="border-bottom:none">
+            <label for="msgInput" style="padding-top:16px">Mensaje</label>
+            <textarea id="msgInput"
+              placeholder="Estimados,&#10;&#10;Me dirijo a ustedes..."
+              spellcheck="true"></textarea>
+          </div>
+
+          <div class="attach-zone">
+            <div class="attach-label">Adjuntos</div>
+            <label class="attach-btn" for="fileInput">
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
               </svg>
-              Programar envío
-            </button>
+              Adjuntar archivo
+            </label>
+            <input type="file" id="fileInput" multiple
+              accept=".pdf,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp,.csv,.txt,.zip,.doc,.docx">
+            <div class="chips" id="chipsContainer"></div>
+          </div>
+
+          <div class="compose-footer">
+            <div class="from-badge">
+              <div class="from-dot"></div>
+              <span>proveedores@mercadolimpio.ar</span>
+            </div>
+            <div class="btn-send-wrap">
+              <button class="btn-send" id="sendBtn" onclick="sendEmail()">
+                <span id="btnText">Enviar</span>
+                <div class="spinner" id="spinner"></div>
+                <div class="gold-bar"></div>
+              </button>
+              <button class="btn-arrow" id="arrowBtn" onclick="toggleDropdown(event)">
+                <svg width="9" height="9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="sched-dropdown" id="schedDropdown">
+                <button class="dropdown-item" onclick="openScheduleModal()">
+                  <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  Programar envío
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <main class="preview-panel">
+          <div class="preview-header">
+            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--muted)">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            <span>Vista previa del email</span>
+            <div class="live-dot"></div>
+            <span class="live-label">En vivo</span>
+          </div>
+          <div class="preview-frame-wrap">
+            <div class="preview-shadow">
+              <iframe id="previewFrame" sandbox="allow-same-origin"></iframe>
+            </div>
+          </div>
+        </main>
+      </div><!-- /#view-compose -->
+
+      <!-- VIEW: Enviados -->
+      <div id="view-sent" class="view">
+        <div class="mail-list-pane">
+          <div class="mail-pane-header">
+            <h3>Enviados</h3>
+            <span class="mail-pane-count" id="sentMailCount"></span>
+          </div>
+          <div class="mail-search-wrap">
+            <input class="mail-search-input" id="mailSearchInput" type="text"
+                   placeholder="Buscar emails…" oninput="filterMailList(this.value)">
+          </div>
+          <div class="mail-list-body" id="mailListBody">
+            <div class="mail-empty">
+              <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <p>Cargando historial…</p>
+            </div>
           </div>
         </div>
-      </div>
 
-    </aside>
-
-    <!-- Panel derecho: Preview -->
-    <main class="preview-panel">
-      <div class="preview-header">
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-        </svg>
-        <span>Vista previa del email</span>
-        <div class="live-dot"></div>
-        <span class="live-label">En vivo</span>
-      </div>
-      <div class="preview-frame-wrap">
-        <div class="preview-shadow">
-          <iframe id="previewFrame" sandbox="allow-same-origin"></iframe>
+        <div class="mail-reading-pane">
+          <div class="reading-empty" id="readingEmpty">
+            <svg width="56" height="56" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width=".8">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            <p>Seleccioná un email para leerlo</p>
+          </div>
+          <div class="reading-content" id="readingContent" style="display:none">
+            <div class="reading-header"  id="readingHeader"></div>
+            <div class="reading-attachments" id="readingAttachments" style="display:none"></div>
+            <div class="reading-iframe-wrap">
+              <div class="reading-iframe-shadow">
+                <iframe id="readingFrame" sandbox="allow-same-origin"></iframe>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </main>
+      </div><!-- /#view-sent -->
 
-  </div>
-</div>
+      <!-- VIEW: Programados -->
+      <div id="view-scheduled" class="view">
+        <div class="sched-view-pane">
+          <div class="sched-view-top">
+            <div>
+              <h3>Emails programados</h3>
+              <p>Se envían automáticamente en el horario configurado</p>
+            </div>
+          </div>
+          <div class="sched-view-list" id="schedViewList">
+            <div class="sched-card-empty">
+              <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <h4>No hay emails programados</h4>
+              <p>Usá el botón "Programar envío" desde Redactar</p>
+            </div>
+          </div>
+        </div>
+      </div><!-- /#view-scheduled -->
 
-<!-- ═══════════════════════════════════════════════════════════════
-     MODAL: Programar envío
-═══════════════════════════════════════════════════════════════ -->
+    </div><!-- /.main-content -->
+  </div><!-- /.workspace -->
+</div><!-- /.app -->
+
+<!-- MODAL: Programar envío -->
 <div class="modal-overlay" id="scheduleModal" onclick="onOverlayClick(event,'scheduleModal')">
   <div class="modal-box">
     <div class="modal-header">
       <h3>
-        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
              style="display:inline;vertical-align:-2px;margin-right:6px;color:var(--gold)">
           <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
         </svg>
@@ -815,27 +752,15 @@
         </svg>
       </button>
     </div>
-
     <div class="modal-body">
       <p class="modal-hint">Elegí cuándo querés enviar este email</p>
-
-      <!-- Opciones rápidas generadas por JS -->
       <div class="quick-opts" id="quickOpts"></div>
-
       <div class="or-divider">o elegí fecha y hora</div>
-
       <div class="dt-row">
-        <div class="dt-field">
-          <label>Fecha</label>
-          <input type="date" id="schedDate">
-        </div>
-        <div class="dt-field">
-          <label>Hora</label>
-          <input type="time" id="schedTime" value="09:00">
-        </div>
+        <div class="dt-field"><label>Fecha</label><input type="date" id="schedDate"></div>
+        <div class="dt-field"><label>Hora</label><input type="time" id="schedTime" value="09:00"></div>
       </div>
     </div>
-
     <div class="modal-footer">
       <button class="btn-ghost" onclick="closeScheduleModal()">Cancelar</button>
       <button class="btn-primary" id="confirmSchedBtn" onclick="confirmSchedule()">
@@ -848,54 +773,31 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     PANEL: Lista de emails programados
-═══════════════════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="scheduledPanel" onclick="onOverlayClick(event,'scheduledPanel')">
-  <div class="modal-box modal-box-wide">
-    <div class="modal-header">
-      <h3>
-        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
-             style="display:inline;vertical-align:-2px;margin-right:6px;color:var(--gold)">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-        </svg>
-        Emails programados
-      </h3>
-      <button class="modal-close" onclick="closeScheduledPanel()">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="sched-list-wrap">
-      <div id="schedListBody"></div>
-    </div>
-
-    <div class="modal-footer">
-      <span class="sched-footer-note">Se envían automáticamente en el horario programado</span>
-      <button class="btn-ghost" onclick="closeScheduledPanel()">Cerrar</button>
-    </div>
-  </div>
-</div>
-
 <div id="toast"></div>
 
 <script>
-  // ── Config ──────────────────────────────────────────────────────────────────
   const WORKER_URL    = "https://proveedor-mailer.santamariapablodaniel.workers.dev";
   const MAILER_SECRET = "Galamar3";
   const HEADERS       = { "X-Mailer-Secret": MAILER_SECRET };
   const FROM_EMAIL    = "proveedores@mercadolimpio.ar";
   const FROM_NAME     = "Mercado Limpio";
 
-  // ── Archivos ─────────────────────────────────────────────────────────────────
+  // ── Navegación ──────────────────────────────────────────────────────────────
+  function switchView(view) {
+    document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
+    document.querySelector(`.nav-item[data-view="${view}"]`).classList.add("active");
+    document.getElementById(`view-${view}`).classList.add("active");
+    if (view === "sent")      loadSentEmails();
+    if (view === "scheduled") loadScheduledView();
+  }
+
+  // ── Archivos ────────────────────────────────────────────────────────────────
   let selectedFiles = [];
 
   document.getElementById("fileInput").addEventListener("change", function () {
     Array.from(this.files).forEach(f => {
-      if (!selectedFiles.find(x => x.name === f.name && x.size === f.size))
-        selectedFiles.push(f);
+      if (!selectedFiles.find(x => x.name === f.name && x.size === f.size)) selectedFiles.push(f);
     });
     this.value = "";
     renderChips();
@@ -908,28 +810,18 @@
     selectedFiles.forEach((f, i) => {
       const chip = document.createElement("div");
       chip.className = "chip";
-      chip.innerHTML = `
-        ${fileIcon(f.name)}
-        <span class="chip-name" title="${esc(f.name)}">${esc(f.name)}</span>
-        <span class="chip-size">${fmtSize(f.size)}</span>
-        <span class="chip-rm" onclick="removeFile(${i})">
-          <svg width="11" height="11" fill="none" viewBox="0 0 24 24"
-               stroke="currentColor" stroke-width="3">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </span>`;
+      chip.innerHTML = `${fileIcon(f.name)}<span class="chip-name" title="${esc(f.name)}">${esc(f.name)}</span><span class="chip-size">${fmtSize(f.size)}</span><span class="chip-rm" onclick="removeFile(${i})"><svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></span>`;
       c.appendChild(chip);
     });
   }
 
   function removeFile(i) { selectedFiles.splice(i, 1); renderChips(); refreshPreview(); }
 
-  // ── Autocomplete ─────────────────────────────────────────────────────────────
+  // ── Autocomplete ────────────────────────────────────────────────────────────
   let allContacts = [], acActive = -1;
 
   fetch(`${WORKER_URL}/contacts`, { headers: HEADERS })
-    .then(r => r.json()).then(d => { allContacts = Array.isArray(d) ? d : []; })
-    .catch(() => {});
+    .then(r => r.json()).then(d => { allContacts = Array.isArray(d) ? d : []; }).catch(() => {});
 
   const toInput = document.getElementById("toInput");
   const acList  = document.getElementById("acList");
@@ -943,19 +835,14 @@
 
   function showAc() {
     const q = toInput.value.trim().toLowerCase();
-    const m = q.length === 0
-      ? allContacts.slice(0, 7)
-      : allContacts.filter(c => c.includes(q)).slice(0, 7);
+    const m = q.length === 0 ? allContacts.slice(0, 7) : allContacts.filter(c => c.includes(q)).slice(0, 7);
     if (!m.length) { closeAc(); return; }
-    acList.innerHTML = m.map((c, i) => `
-      <div class="ac-item" data-email="${esc(c)}" data-idx="${i}" onclick="selectAc('${esc(c)}')">
-        <svg width="13" height="13" fill="none" viewBox="0 0 24 24"
-             stroke="currentColor" stroke-width="2">
+    acList.innerHTML = m.map(c => `
+      <div class="ac-item" onclick="selectAc('${esc(c)}')">
+        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-        </svg>
-        ${esc(c)}
-      </div>`).join("");
+        </svg>${esc(c)}</div>`).join("");
     acActive = -1;
     acList.classList.add("open");
   }
@@ -963,112 +850,37 @@
   function navigateAc(e) {
     const items = acList.querySelectorAll(".ac-item");
     if (!items.length) return;
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      acActive = Math.min(acActive + 1, items.length - 1);
-      items.forEach((el, i) => el.classList.toggle("active", i === acActive));
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      acActive = Math.max(acActive - 1, -1);
-      items.forEach((el, i) => el.classList.toggle("active", i === acActive));
-    } else if (e.key === "Enter" && acActive >= 0) {
-      e.preventDefault();
-      selectAc(items[acActive].dataset.email);
-    } else if (e.key === "Escape") {
-      closeAc();
-    }
+    if (e.key === "ArrowDown") { e.preventDefault(); acActive = Math.min(acActive + 1, items.length - 1); items.forEach((el, i) => el.classList.toggle("active", i === acActive)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); acActive = Math.max(acActive - 1, -1); items.forEach((el, i) => el.classList.toggle("active", i === acActive)); }
+    else if (e.key === "Enter" && acActive >= 0) { e.preventDefault(); selectAc(items[acActive].textContent.trim()); }
+    else if (e.key === "Escape") closeAc();
   }
 
-  function selectAc(email) {
-    toInput.value = email;
-    closeAc();
-    document.getElementById("subjectInput").focus();
-    refreshPreview();
-  }
-
+  function selectAc(email) { toInput.value = email; closeAc(); document.getElementById("subjectInput").focus(); refreshPreview(); }
   function closeAc() { acList.classList.remove("open"); acActive = -1; }
 
-  // ── Preview en vivo ──────────────────────────────────────────────────────────
+  // ── Preview en vivo ─────────────────────────────────────────────────────────
   let previewTimer;
-
-  function refreshPreview() {
-    clearTimeout(previewTimer);
-    previewTimer = setTimeout(_buildPreview, 250);
-  }
+  function refreshPreview() { clearTimeout(previewTimer); previewTimer = setTimeout(_buildPreview, 250); }
 
   function _buildPreview() {
     const subject = document.getElementById("subjectInput").value || "Asunto del mensaje";
     const message = document.getElementById("msgInput").value    || "El contenido del mensaje aparecerá aquí...";
     const date    = new Date().toLocaleDateString("es-AR", { day:"2-digit", month:"long", year:"numeric" });
-
-    const attachList = selectedFiles.length ? `
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px">
-        <tr><td style="padding-bottom:10px;font-family:'Helvetica Neue',Arial,sans-serif;
-                       font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
-                       color:#8a7a5a;border-bottom:1px solid #e8e0d0">Archivos adjuntos</td></tr>
-        ${selectedFiles.map(f => `
-        <tr><td style="padding:10px 0;font-family:'Helvetica Neue',Arial,sans-serif;
-                       font-size:13px;color:#4a5568;border-bottom:1px solid #f0ede8">
-          📎&nbsp;&nbsp;${esc(f.name)}
-        </td></tr>`).join("")}
-      </table>` : "";
-
-    const html = `<!DOCTYPE html>
-<html><head><meta charset="UTF-8">
-<style>*{box-sizing:border-box}body{margin:0;background:#f0ede8;font-family:'Helvetica Neue',Arial,sans-serif}</style>
-</head><body>
-<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ede8;padding:32px 16px">
-<tr><td align="center">
-<table width="100%" cellpadding="0" cellspacing="0" border="0"
-       style="max-width:580px;background:#fff;box-shadow:0 4px 32px rgba(15,27,53,.10)">
-  <tr><td height="6" style="background:linear-gradient(90deg,#0f1b35 0%,#1e3a6e 100%)">&nbsp;</td></tr>
-  <tr><td align="center" style="padding:36px 48px 30px;border-bottom:3px solid #c9a558">
-    <img src="${location.origin}/proveedor-mailer/logo.jpeg" width="190" style="display:block;border:0">
-  </td></tr>
-  <tr><td style="padding:28px 48px 0">
-    <p style="margin:0 0 5px;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#8a7a5a;font-weight:600">${date}</p>
-    <h2 style="margin:0;font-size:18px;font-weight:300;color:#0f1b35;letter-spacing:.3px;line-height:1.35;border-bottom:1px solid #ede8e0;padding-bottom:20px">${escHtml(subject)}</h2>
-  </td></tr>
-  <tr><td style="padding:28px 48px 36px">
-    <p style="margin:0;font-size:15px;color:#2d3748;line-height:1.85;font-weight:300">${escHtml(message).replace(/\n/g,"<br>")}</p>
-    ${attachList}
-  </td></tr>
-  <tr><td height="1" style="background:#c9a558">&nbsp;</td></tr>
-  <tr><td style="padding:28px 48px;background:#faf8f5">
-    <p style="margin:0 0 3px;font-size:13px;font-weight:700;color:#0f1b35">${FROM_NAME}</p>
-    <p style="margin:0 0 10px;font-size:12px;color:#8a7a5a">Distribuidora · Buenos Aires, Argentina</p>
-    <p style="margin:0;font-size:11px;color:#a09070">${FROM_EMAIL}</p>
-  </td></tr>
-  <tr><td style="padding:18px 48px;background:#0f1b35">
-    <p style="margin:0;font-size:10px;color:#5a7ab5;letter-spacing:1px;text-transform:uppercase">
-      Mercado Limpio Distribuidora ®
-    </p>
-    <p style="margin:4px 0 0;font-size:10px;color:#3d5a8a">
-      Este email y sus adjuntos son confidenciales y de uso exclusivo del destinatario.
-    </p>
-  </td></tr>
-</table>
-</td></tr></table>
-</body></html>`;
-
+    const attList = selectedFiles.length ? `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px"><tr><td style="padding-bottom:10px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8a7a5a;border-bottom:1px solid #e8e0d0">Archivos adjuntos</td></tr>${selectedFiles.map(f=>`<tr><td style="padding:10px 0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;color:#4a5568;border-bottom:1px solid #f0ede8">📎&nbsp;&nbsp;${esc(f.name)}</td></tr>`).join("")}</table>` : "";
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{box-sizing:border-box}body{margin:0;background:#f0ede8;font-family:'Helvetica Neue',Arial,sans-serif}</style></head><body><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ede8;padding:32px 16px"><tr><td align="center"><table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;background:#fff;box-shadow:0 4px 32px rgba(15,27,53,.10)"><tr><td height="6" style="background:linear-gradient(90deg,#0f1b35 0%,#1e3a6e 100%)">&nbsp;</td></tr><tr><td align="center" style="padding:36px 48px 30px;border-bottom:3px solid #c9a558"><img src="${location.origin}/proveedor-mailer/logo.jpeg" width="190" style="display:block;border:0"></td></tr><tr><td style="padding:28px 48px 0"><p style="margin:0 0 5px;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#8a7a5a;font-weight:600">${date}</p><h2 style="margin:0;font-size:18px;font-weight:300;color:#0f1b35;border-bottom:1px solid #ede8e0;padding-bottom:20px">${escHtml(subject)}</h2></td></tr><tr><td style="padding:28px 48px 36px"><p style="margin:0;font-size:15px;color:#2d3748;line-height:1.85;font-weight:300">${escHtml(message).replace(/\n/g,"<br>")}</p>${attList}</td></tr><tr><td height="1" style="background:#c9a558">&nbsp;</td></tr><tr><td style="padding:28px 48px;background:#faf8f5"><p style="margin:0 0 3px;font-size:13px;font-weight:700;color:#0f1b35">${FROM_NAME}</p><p style="margin:0 0 10px;font-size:12px;color:#8a7a5a">Distribuidora · Buenos Aires, Argentina</p><p style="margin:0;font-size:11px;color:#a09070">${FROM_EMAIL}</p></td></tr><tr><td style="padding:18px 48px;background:#0f1b35"><p style="margin:0;font-size:10px;color:#5a7ab5;letter-spacing:1px;text-transform:uppercase">Mercado Limpio Distribuidora ®</p></td></tr></table></td></tr></table></body></html>`;
     const frame = document.getElementById("previewFrame");
     frame.srcdoc = html;
-    frame.onload = () => {
-      try {
-        const h = frame.contentDocument.body.scrollHeight;
-        frame.style.height = Math.max(h + 32, 500) + "px";
-      } catch {}
-    };
+    frame.onload = () => { try { frame.style.height = Math.max(frame.contentDocument.body.scrollHeight + 32, 500) + "px"; } catch {} };
   }
 
   _buildPreview();
 
-  // ── Envío inmediato ──────────────────────────────────────────────────────────
+  // ── Envío inmediato ─────────────────────────────────────────────────────────
   async function sendEmail() {
     const to      = toInput.value.trim();
     const subject = document.getElementById("subjectInput").value.trim();
     const message = document.getElementById("msgInput").value.trim();
-
     if (!to)      { showToast("Ingresá el email del proveedor", "error"); toInput.focus(); return; }
     if (!subject) { showToast("Escribí el asunto", "error"); document.getElementById("subjectInput").focus(); return; }
     if (!message) { showToast("El mensaje no puede estar vacío", "error"); document.getElementById("msgInput").focus(); return; }
@@ -1080,9 +892,7 @@
 
     try {
       const form = new FormData();
-      form.append("to", to);
-      form.append("subject", subject);
-      form.append("message", message);
+      form.append("to", to); form.append("subject", subject); form.append("message", message);
       selectedFiles.forEach(f => form.append("archivos", f));
 
       const res  = await fetch(`${WORKER_URL}/send`, { method: "POST", headers: HEADERS, body: form });
@@ -1093,7 +903,6 @@
       clearForm();
       const e = to.toLowerCase();
       if (!allContacts.includes(e)) allContacts.unshift(e);
-
     } catch (err) {
       showToast("Error: " + err.message, "error");
     } finally {
@@ -1103,291 +912,284 @@
     }
   }
 
-  // ── Split button: dropdown ───────────────────────────────────────────────────
-  function toggleDropdown(e) {
-    e.stopPropagation();
-    document.getElementById("schedDropdown").classList.toggle("open");
-  }
+  // ── Split button ────────────────────────────────────────────────────────────
+  function toggleDropdown(e) { e.stopPropagation(); document.getElementById("schedDropdown").classList.toggle("open"); }
+  document.addEventListener("click", () => document.getElementById("schedDropdown").classList.remove("open"));
 
-  document.addEventListener("click", () => {
-    document.getElementById("schedDropdown").classList.remove("open");
-  });
-
-  // ── Modal: Programar envío ───────────────────────────────────────────────────
+  // ── Modal: Programar ────────────────────────────────────────────────────────
   function openScheduleModal() {
     document.getElementById("schedDropdown").classList.remove("open");
-
-    // Validar que haya algo para enviar
-    if (!toInput.value.trim() || !document.getElementById("subjectInput").value.trim() ||
-        !document.getElementById("msgInput").value.trim()) {
-      showToast("Completá Para, Asunto y Mensaje antes de programar", "error");
-      return;
+    if (!toInput.value.trim() || !document.getElementById("subjectInput").value.trim() || !document.getElementById("msgInput").value.trim()) {
+      showToast("Completá Para, Asunto y Mensaje antes de programar", "error"); return;
     }
-
-    // Generar opciones rápidas
     document.getElementById("quickOpts").innerHTML = buildQuickOptions();
-
-    // Setear fecha mínima = hoy
     const todayStr = new Date().toISOString().split("T")[0];
-    const dateInput = document.getElementById("schedDate");
-    dateInput.min   = todayStr;
-    if (!dateInput.value) dateInput.value = todayStr;
-
+    const di = document.getElementById("schedDate");
+    di.min = todayStr;
+    if (!di.value) di.value = todayStr;
     document.getElementById("scheduleModal").classList.add("open");
   }
 
-  function closeScheduleModal() {
-    document.getElementById("scheduleModal").classList.remove("open");
-  }
+  function closeScheduleModal() { document.getElementById("scheduleModal").classList.remove("open"); }
 
   function onOverlayClick(e, id) {
-    if (e.target === document.getElementById(id)) {
-      document.getElementById(id).classList.remove("open");
-    }
+    if (e.target === document.getElementById(id)) document.getElementById(id).classList.remove("open");
   }
 
   function buildQuickOptions() {
-    const now  = new Date();
-    const opts = [];
-
-    // Esta tarde 18:00 (solo si son antes de las 17:30)
-    const tarde = new Date(now);
-    tarde.setHours(18, 0, 0, 0);
-    if (tarde.getTime() - now.getTime() > 30 * 60 * 1000) {
-      opts.push({ label: "Esta tarde", d: tarde });
-    }
-
-    // Mañana 9:00
-    const manana = new Date(now);
-    manana.setDate(manana.getDate() + 1);
-    manana.setHours(9, 0, 0, 0);
-    opts.push({ label: "Mañana a la mañana", d: manana });
-
-    // Próximo lunes 9:00
-    const lunes = new Date(now);
-    const dow = lunes.getDay(); // 0=dom,1=lun...
-    const daysToMon = dow === 1 ? 7 : (8 - dow) % 7 || 7;
-    lunes.setDate(lunes.getDate() + daysToMon);
-    lunes.setHours(9, 0, 0, 0);
-    opts.push({ label: "Próximo lunes", d: lunes });
-
-    return opts.map(o => `
-      <button class="quick-opt" onclick="pickQuickOption('${o.d.toISOString()}')">
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-        </svg>
-        <span class="opt-label">${o.label}</span>
-        <span class="opt-when">${fmtDate(o.d)}</span>
-      </button>`).join("");
+    const now = new Date(), opts = [];
+    const tarde = new Date(now); tarde.setHours(18, 0, 0, 0);
+    if (tarde - now > 30 * 60 * 1000) opts.push({ label: "Esta tarde", d: tarde });
+    const man = new Date(now); man.setDate(man.getDate() + 1); man.setHours(9, 0, 0, 0);
+    opts.push({ label: "Mañana a la mañana", d: man });
+    const lun = new Date(now); const dow = lun.getDay();
+    lun.setDate(lun.getDate() + (dow === 1 ? 7 : (8 - dow) % 7 || 7)); lun.setHours(9, 0, 0, 0);
+    opts.push({ label: "Próximo lunes", d: lun });
+    return opts.map(o => `<button class="quick-opt" onclick="pickQuickOption('${o.d.toISOString()}')"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="opt-label">${o.label}</span><span class="opt-when">${fmtDate(o.d)}</span></button>`).join("");
   }
 
-  function pickQuickOption(isoStr) {
-    const d = new Date(isoStr);
-    // Rellenar los inputs
-    document.getElementById("schedDate").value =
-      `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-    document.getElementById("schedTime").value =
-      `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
-    // Confirmar directamente (igual que Gmail)
+  function pickQuickOption(iso) {
+    const d = new Date(iso);
+    document.getElementById("schedDate").value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    document.getElementById("schedTime").value = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
     confirmSchedule();
   }
 
   async function confirmSchedule() {
     const dateVal = document.getElementById("schedDate").value;
     const timeVal = document.getElementById("schedTime").value;
-
     if (!dateVal || !timeVal) { showToast("Elegí la fecha y la hora", "error"); return; }
-
     const sendAt = new Date(`${dateVal}T${timeVal}:00`);
-    if (isNaN(sendAt.getTime()))    { showToast("Fecha u hora inválida", "error"); return; }
-    if (sendAt <= new Date())       { showToast("La fecha debe ser futura", "error"); return; }
+    if (isNaN(sendAt.getTime())) { showToast("Fecha u hora inválida", "error"); return; }
+    if (sendAt <= new Date()) { showToast("La fecha debe ser futura", "error"); return; }
 
     const btn = document.getElementById("confirmSchedBtn");
     btn.disabled = true;
-    btn.innerHTML = `
-      <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"
-           style="animation:spin .7s linear infinite">
-        <circle cx="12" cy="12" r="10" stroke-dasharray="30" stroke-dashoffset="10"/>
-      </svg>
-      Programando…`;
+    btn.innerHTML = `<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="animation:spin .7s linear infinite"><circle cx="12" cy="12" r="10" stroke-dasharray="30" stroke-dashoffset="10"/></svg>Programando…`;
 
     try {
-      const to      = toInput.value.trim();
-      const subject = document.getElementById("subjectInput").value.trim();
-      const message = document.getElementById("msgInput").value.trim();
-
+      const to = toInput.value.trim(), subject = document.getElementById("subjectInput").value.trim(), message = document.getElementById("msgInput").value.trim();
       const form = new FormData();
-      form.append("to", to);
-      form.append("subject", subject);
-      form.append("message", message);
-      form.append("sendAt", sendAt.toISOString());
+      form.append("to", to); form.append("subject", subject); form.append("message", message); form.append("sendAt", sendAt.toISOString());
       selectedFiles.forEach(f => form.append("archivos", f));
-
       const res  = await fetch(`${WORKER_URL}/schedule`, { method: "POST", headers: HEADERS, body: form });
       const data = await res.json();
       if (!data.ok) throw new Error(data.error || "Error desconocido");
-
       closeScheduleModal();
-
-      const label = sendAt.toLocaleDateString("es-AR", {
-        weekday: "long", day: "numeric", month: "long",
-        hour: "2-digit", minute: "2-digit"
-      });
-      showToast(`Programado para el ${label}`, "success");
-
-      clearForm();
-      scheduledCount++;
-      updateBadge();
-
+      showToast(`Programado para el ${sendAt.toLocaleDateString("es-AR", { weekday:"long", day:"numeric", month:"long", hour:"2-digit", minute:"2-digit" })}`, "success");
+      clearForm(); scheduledCount++; updateSchedBadge();
       const e = to.toLowerCase();
       if (!allContacts.includes(e)) allContacts.unshift(e);
-
-    } catch (err) {
-      showToast("Error al programar: " + err.message, "error");
+    } catch (err) { showToast("Error: " + err.message, "error");
     } finally {
       btn.disabled = false;
-      btn.innerHTML = `
-        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-        </svg>
-        Programar envío`;
+      btn.innerHTML = `<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Programar envío`;
     }
   }
 
-  // ── Panel: lista de programados ──────────────────────────────────────────────
+  // ── Programados: badge + view ───────────────────────────────────────────────
   let scheduledCount = 0;
 
-  async function openScheduledPanel() {
-    document.getElementById("scheduledPanel").classList.add("open");
-    await loadScheduledList();
+  function updateSchedBadge() {
+    const b = document.getElementById("schedBadge");
+    b.textContent = scheduledCount;
+    b.classList.toggle("visible", scheduledCount > 0);
   }
 
-  function closeScheduledPanel() {
-    document.getElementById("scheduledPanel").classList.remove("open");
-  }
-
-  async function loadScheduledList() {
-    const body = document.getElementById("schedListBody");
-    body.innerHTML = `<div style="padding:28px;text-align:center;color:var(--muted);font-size:13px">Cargando…</div>`;
-
+  async function loadScheduledView() {
+    const list = document.getElementById("schedViewList");
+    list.innerHTML = `<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px">Cargando…</div>`;
     try {
       const res  = await fetch(`${WORKER_URL}/scheduled`, { headers: HEADERS });
       const data = await res.json();
-      const items = data.scheduled || [];
-
-      scheduledCount = items.length;
-      updateBadge();
-
+      const items = (data.scheduled || []).filter(e => e.status === "pending");
+      scheduledCount = items.length; updateSchedBadge();
       if (!items.length) {
-        body.innerHTML = `
-          <div class="sched-empty">
-            <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <p>No hay emails programados</p>
-          </div>`;
+        list.innerHTML = `<div class="sched-card-empty"><svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><h4>No hay emails programados</h4><p>Usá el botón "Programar envío" desde Redactar</p></div>`;
         return;
       }
-
-      body.innerHTML = items.map(item => `
-        <div class="sched-item">
-          <div class="sched-item-info">
-            <div class="sched-item-subject">${esc(item.subject)}</div>
-            <div class="sched-item-meta">
-              <svg class="clock-icon" width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      list.innerHTML = items.map(item => `
+        <div class="sched-card">
+          <div class="sched-card-icon">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="sched-card-info">
+            <div class="sched-card-subject">${esc(item.subject)}</div>
+            <div class="sched-card-to">${esc(item.to)}</div>
+            <span class="sched-card-when">
+              <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
               </svg>
-              ${esc(item.to)} &mdash; ${fmtScheduled(item.sendAt)}
-            </div>
+              ${fmtScheduled(item.sendAt)}
+            </span>
           </div>
-          <button class="btn-cancel-sched" onclick="cancelScheduled('${esc(item.id)}')">Cancelar</button>
+          <button class="btn-cancel" onclick="cancelScheduledItem('${esc(item.id)}')">Cancelar</button>
         </div>`).join("");
-
     } catch (err) {
-      body.innerHTML = `<div style="padding:20px;color:#dc2626;font-size:13px">Error: ${esc(err.message)}</div>`;
+      list.innerHTML = `<div style="padding:20px;color:#dc2626;font-size:13px">Error: ${esc(err.message)}</div>`;
     }
   }
 
-  async function cancelScheduled(id) {
+  async function cancelScheduledItem(id) {
     if (!confirm("¿Cancelar este envío programado?")) return;
     try {
       const res  = await fetch(`${WORKER_URL}/scheduled/${id}`, { method: "DELETE", headers: HEADERS });
       const data = await res.json();
       if (!data.ok) throw new Error(data.error);
-      showToast("Envío cancelado", "success");
-      await loadScheduledList();
-    } catch (err) {
-      showToast("Error: " + err.message, "error");
-    }
+      showToast("Envío cancelado", "success"); await loadScheduledView();
+    } catch (err) { showToast("Error: " + err.message, "error"); }
   }
 
-  // Cargar el contador al inicio
+  // Init badge
   (async () => {
     try {
       const res  = await fetch(`${WORKER_URL}/scheduled`, { headers: HEADERS });
       const data = await res.json();
-      scheduledCount = (data.scheduled || []).length;
-      updateBadge();
+      scheduledCount = (data.scheduled || []).filter(e => e.status === "pending").length;
+      updateSchedBadge();
     } catch {}
   })();
 
-  function updateBadge() {
-    const badge = document.getElementById("schedBadge");
-    badge.textContent = scheduledCount;
-    badge.classList.toggle("visible", scheduledCount > 0);
+  // ── Enviados / Historial ────────────────────────────────────────────────────
+  let sentEmailsData = [], currentEmailDetail = null, selectedMailId = null;
+
+  async function loadSentEmails() {
+    const body = document.getElementById("mailListBody");
+    body.innerHTML = `<div style="padding:28px;text-align:center;color:var(--muted);font-size:13px">Cargando…</div>`;
+    try {
+      const res  = await fetch(`${WORKER_URL}/historial?limit=200`, { headers: HEADERS });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+      sentEmailsData = data.emails || [];
+      renderMailList(sentEmailsData);
+      const n = sentEmailsData.length;
+      document.getElementById("sentMailCount").textContent = `${n} email${n !== 1 ? "s" : ""}`;
+      const b = document.getElementById("sentBadge");
+      b.textContent = n; b.classList.toggle("visible", n > 0);
+    } catch (err) {
+      body.innerHTML = `<div style="padding:20px;color:#dc2626;font-size:13px">Error: ${esc(err.message)}</div>`;
+    }
   }
 
-  // ── Helpers ──────────────────────────────────────────────────────────────────
+  function filterMailList(q) {
+    const lq = q.toLowerCase();
+    renderMailList(lq ? sentEmailsData.filter(e => e.asunto.toLowerCase().includes(lq) || (e.destinatarios||[]).join(" ").toLowerCase().includes(lq)) : sentEmailsData);
+  }
+
+  function renderMailList(items) {
+    const body = document.getElementById("mailListBody");
+    if (!items.length) {
+      body.innerHTML = `<div class="mail-empty"><svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><p>No hay emails</p></div>`;
+      return;
+    }
+    body.innerHTML = items.map(item => {
+      const adj   = (item.adjuntos_meta || []).length;
+      const dests = (item.destinatarios || []).join(", ");
+      const date  = new Date(item.enviado_at).toLocaleDateString("es-AR", { day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit" });
+      return `
+        <div class="mail-item${selectedMailId===item.id?" selected":""}" onclick="openMailItem('${esc(item.id)}')">
+          <div class="mail-item-subject">${esc(item.asunto)}</div>
+          <div class="mail-item-dest">${esc(dests)}</div>
+          <div class="mail-item-foot">
+            <span class="mail-item-date">${date}</span>
+            ${item.tipo==="programado"?`<span class="badge badge-prog">Prog.</span>`:""}
+            ${adj>0?`<span class="badge badge-adj">📎 ${adj}</span>`:""}
+          </div>
+        </div>`;
+    }).join("");
+  }
+
+  async function openMailItem(id) {
+    selectedMailId = id;
+    const q = document.getElementById("mailSearchInput").value.toLowerCase();
+    renderMailList(q ? sentEmailsData.filter(e => e.asunto.toLowerCase().includes(q)||(e.destinatarios||[]).join(" ").toLowerCase().includes(q)) : sentEmailsData);
+
+    document.getElementById("readingEmpty").style.display   = "none";
+    document.getElementById("readingContent").style.display = "flex";
+    document.getElementById("readingHeader").innerHTML = `<div style="color:var(--muted);font-size:12px;padding:4px 0">Cargando…</div>`;
+    document.getElementById("readingAttachments").style.display = "none";
+    document.getElementById("readingFrame").srcdoc = "";
+
+    try {
+      const res  = await fetch(`${WORKER_URL}/historial?id=${encodeURIComponent(id)}`, { headers: HEADERS });
+      const data = await res.json();
+      if (!data.ok || !data.email) throw new Error(data.error || "No encontrado");
+      const email = data.email;
+      currentEmailDetail = email;
+
+      const date  = new Date(email.enviado_at).toLocaleDateString("es-AR", { weekday:"long", day:"numeric", month:"long", year:"numeric", hour:"2-digit", minute:"2-digit" });
+      const dests = (email.destinatarios || []).join(", ");
+
+      document.getElementById("readingHeader").innerHTML = `
+        <div class="reading-subject">${esc(email.asunto)}</div>
+        <div class="reading-meta">
+          <div class="reading-meta-row"><span class="reading-meta-label">Para</span><span class="reading-meta-val">${esc(dests)}</span></div>
+          <div class="reading-meta-row"><span class="reading-meta-label">Fecha</span><span class="reading-meta-val">${date}</span></div>
+          <div class="reading-meta-row"><span class="reading-meta-label">Tipo</span><span class="reading-meta-val">${email.tipo==="programado"?"Programado":"Inmediato"}</span></div>
+        </div>`;
+
+      const adjData = email.adjuntos_data || [], adjMeta = email.adjuntos_meta || [];
+      if (adjData.length) {
+        const adjEl = document.getElementById("readingAttachments");
+        adjEl.style.display = "";
+        adjEl.innerHTML = `<span class="reading-adj-label">Adjuntos</span>` +
+          adjData.map((a, i) => {
+            const size = adjMeta[i] ? fmtSize(adjMeta[i].size||0) : "";
+            return `<div class="reading-adj-chip"><svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg><span>${esc(a.filename)}</span>${size?`<span class="reading-adj-size">${size}</span>`:""} ${a.content?`<button class="reading-adj-dl" onclick="downloadAttachment(${i})">⬇ Descargar</button>`:""}</div>`;
+          }).join("");
+      }
+
+      if (email.cuerpo_html) {
+        const frame = document.getElementById("readingFrame");
+        frame.srcdoc = email.cuerpo_html;
+        frame.onload = () => { try { frame.style.height = Math.max(frame.contentDocument.body.scrollHeight + 32, 400) + "px"; } catch {} };
+      }
+    } catch (err) {
+      document.getElementById("readingHeader").innerHTML = `<div style="color:#dc2626;font-size:13px">Error: ${esc(err.message)}</div>`;
+    }
+  }
+
+  function downloadAttachment(i) {
+    if (!currentEmailDetail) return;
+    const a = (currentEmailDetail.adjuntos_data||[])[i];
+    if (!a||!a.content) return;
+    const ext = a.filename.split(".").pop().toLowerCase();
+    const mimes = { pdf:"application/pdf", xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", xls:"application/vnd.ms-excel", doc:"application/msword", docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document", png:"image/png", jpg:"image/jpeg", jpeg:"image/jpeg", gif:"image/gif", webp:"image/webp", csv:"text/csv", txt:"text/plain", zip:"application/zip" };
+    const mime = mimes[ext] || "application/octet-stream";
+    const bin  = atob(a.content); const arr = new Uint8Array(bin.length);
+    for (let k = 0; k < bin.length; k++) arr[k] = bin.charCodeAt(k);
+    const url = URL.createObjectURL(new Blob([arr], { type: mime }));
+    const lnk = document.createElement("a"); lnk.href = url; lnk.download = a.filename; lnk.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── Helpers ─────────────────────────────────────────────────────────────────
   function clearForm() {
     toInput.value = "";
     document.getElementById("subjectInput").value = "";
     document.getElementById("msgInput").value = "";
-    selectedFiles = [];
-    renderChips();
-    _buildPreview();
+    selectedFiles = []; renderChips(); _buildPreview();
   }
 
   let toastTimer;
   function showToast(msg, type = "") {
     const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.className = "show" + (type ? " " + type : "");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { t.className = ""; }, 3800);
+    t.textContent = msg; t.className = "show" + (type ? " " + type : "");
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.className = ""; }, 3800);
   }
 
-  function esc(s) {
-    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-  }
-
-  function escHtml(s) {
-    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  }
-
-  function fmtSize(b) {
-    if (b < 1024) return b + " B";
-    if (b < 1048576) return (b/1024).toFixed(0) + " KB";
-    return (b/1048576).toFixed(1) + " MB";
-  }
-
-  function fmtDate(d) {
-    return d.toLocaleDateString("es-AR", { weekday: "short", day: "numeric", month: "short" })
-      + " " + d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
-  }
-
-  function fmtScheduled(isoStr) {
-    return new Date(isoStr).toLocaleDateString("es-AR", {
-      weekday: "short", day: "numeric", month: "short",
-      year: "numeric", hour: "2-digit", minute: "2-digit"
-    });
-  }
+  function esc(s)     { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function escHtml(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function fmtSize(b) { if (b<1024) return b+" B"; if (b<1048576) return (b/1024).toFixed(0)+" KB"; return (b/1048576).toFixed(1)+" MB"; }
+  function fmtDate(d) { return d.toLocaleDateString("es-AR",{weekday:"short",day:"numeric",month:"short"})+" "+d.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"}); }
+  function fmtScheduled(iso) { return new Date(iso).toLocaleDateString("es-AR",{weekday:"short",day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}); }
 
   function fileIcon(name) {
     const ext = name.split(".").pop().toLowerCase();
-    if (["jpg","jpeg","png","gif","webp"].includes(ext))
-      return `<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>`;
-    if (["xls","xlsx","csv"].includes(ext))
-      return `<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 17v-2m3 2v-4m3 4v-6M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>`;
+    if (["jpg","jpeg","png","gif","webp"].includes(ext)) return `<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>`;
+    if (["xls","xlsx","csv"].includes(ext)) return `<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 17v-2m3 2v-4m3 4v-6M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>`;
     return `<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>`;
   }
 </script>
