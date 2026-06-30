@@ -920,38 +920,55 @@
     .btn-apply-reply:hover { background: var(--navy2); }
 
     /* ══════════════════════════════════════════════
-       BOTTOM NAV + FAB (solo mobile)
+       SIDE RAIL (solo mobile)
     ══════════════════════════════════════════════ */
-    .bottom-nav {
-      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+    .side-rail {
+      display: none;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: 52px;
       background: var(--navy);
-      border-top: 1px solid rgba(255,255,255,.08);
-      height: 66px; z-index: 200;
-      padding-bottom: env(safe-area-inset-bottom, 0px);
+      border-right: 1px solid rgba(255,255,255,.08);
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0 12px;
+      z-index: 200;
+      transition: transform .22s cubic-bezier(.4,0,.2,1);
     }
-    .bottom-nav-inner {
-      display: flex; height: 66px; align-items: stretch;
+    .side-rail.slide-out {
+      transform: translateX(-100%);
     }
-    .bottom-nav-item {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 4px;
-      background: none; border: none; border-top: 2px solid transparent;
-      color: rgba(255,255,255,.4); font-size: 10px; font-weight: 600;
-      font-family: inherit; cursor: pointer; padding: 8px 2px 6px;
-      transition: color .14s, border-color .14s;
+    .side-rail-logo {
+      width: 34px; height: 34px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: .80;
+      margin-bottom: 10px;
+      border-radius: 6px;
     }
-    .bottom-nav-item svg { flex-shrink: 0; }
-    .bottom-nav-item span { display: block; white-space: nowrap; }
-    .bottom-nav-item.active { color: var(--gold); border-top-color: var(--gold); }
-    .fab.fab-hidden { display: none !important; }
-    .fab {
-      display: none; position: fixed; bottom: 80px; right: 20px;
-      width: 54px; height: 54px; background: var(--gold); color: var(--navy);
-      border: none; border-radius: 50%; box-shadow: 0 6px 20px rgba(201,165,88,.45);
-      cursor: pointer; align-items: center; justify-content: center;
-      z-index: 201; transition: transform .14s, box-shadow .14s;
+    .side-rail-divider {
+      width: 28px; height: 1px;
+      background: rgba(255,255,255,.08);
+      margin: 4px 0;
     }
-    .fab:active { transform: scale(.90); }
+    .side-rail-item {
+      position: relative;
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: none; border-radius: 10px;
+      color: rgba(255,255,255,.38);
+      cursor: pointer; margin: 2px 0;
+      transition: background .14s, color .14s;
+    }
+    .side-rail-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.7); }
+    .side-rail-item.active { background: rgba(201,165,88,.18); color: var(--gold); }
+    .side-rail-dot {
+      position: absolute; top: 6px; right: 6px;
+      width: 7px; height: 7px;
+      background: var(--gold); border-radius: 50%;
+      border: 1.5px solid var(--navy);
+      display: none;
+    }
+    .side-rail-dot.visible { display: block; }
 
     /* Mobile back bar (reading pane) */
     .mobile-back-bar {
@@ -974,11 +991,11 @@
     ══════════════════════════════════════════════ */
     @media (max-width: 768px) {
       .sidebar { display: none; }
-      .bottom-nav { display: flex; }
-      .fab { display: flex; }
+      .side-rail { display: flex; }
 
-      /* App height: viewport minus bottom nav */
-      .app { height: calc(100dvh - 66px); height: calc(100vh - 66px); }
+      /* App shifts right to clear the side rail */
+      .app { height: 100dvh; height: 100vh; margin-left: 52px; }
+      .app.compose-mode { margin-left: 0; }
 
       /* Dashboard */
       .kpi-grid { grid-template-columns: 1fr 1fr; gap: 11px; }
@@ -1009,7 +1026,7 @@
       #view-sent.active { flex-direction: column !important; }
       .mail-list-pane { width: 100%; border-right: none; flex: 1; }
       .mail-reading-pane {
-        position: fixed; top: 0; left: 0; right: 0; bottom: 66px;
+        position: fixed; top: 0; left: 52px; right: 0; bottom: 0;
         z-index: 150; background: var(--bg);
         display: none; flex-direction: column;
       }
@@ -1332,45 +1349,42 @@
   </div><!-- /.main-content -->
 </div><!-- /.app -->
 
-<!-- Bottom nav (mobile) -->
-<nav class="bottom-nav">
-  <div class="bottom-nav-inner">
-    <button class="bottom-nav-item active" data-view="dashboard" onclick="switchView('dashboard')">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
-        <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
-      </svg>
-      <span>Inicio</span>
-    </button>
-    <button class="bottom-nav-item" data-view="compose" onclick="switchView('compose')">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-      </svg>
-      <span>Nuevo</span>
-    </button>
-    <button class="bottom-nav-item" data-view="sent" onclick="switchView('sent')">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-      </svg>
-      <span>Buzón</span>
-    </button>
-    <button class="bottom-nav-item" data-view="scheduled" onclick="switchView('scheduled')">
-      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-      </svg>
-      <span>Agenda</span>
-    </button>
-  </div>
-</nav>
+<!-- Side rail (mobile) -->
+<nav class="side-rail">
+  <img class="side-rail-logo" src="/proveedor-mailer/logo.jpeg" alt="ML">
+  <div class="side-rail-divider"></div>
 
-<!-- FAB componer (mobile) -->
-<button class="fab" onclick="switchView('compose')" title="Nuevo mensaje">
-  <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-  </svg>
-</button>
+  <button class="side-rail-item active" data-view="dashboard" onclick="switchView('dashboard')" title="Dashboard">
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+      <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+    </svg>
+  </button>
+
+  <button class="side-rail-item" data-view="compose" onclick="switchView('compose')" title="Redactar">
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+    </svg>
+  </button>
+
+  <button class="side-rail-item" data-view="sent" onclick="switchView('sent')" title="Enviados">
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+    </svg>
+    <span class="side-rail-dot" id="sentDot"></span>
+  </button>
+
+  <div class="side-rail-divider"></div>
+
+  <button class="side-rail-item" data-view="scheduled" onclick="switchView('scheduled')" title="Programados">
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </svg>
+    <span class="side-rail-dot" id="schedDot"></span>
+  </button>
+</nav>
 
 <!-- MODAL: Programar envío -->
 <div class="modal-overlay" id="scheduleModal" onclick="onOverlayClick(event,'scheduleModal')">
@@ -1471,18 +1485,26 @@
   // ── Navegación ──────────────────────────────────────────────────────────────
   function switchView(view) {
     document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
-    document.querySelectorAll(".bottom-nav-item").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".side-rail-item").forEach(el => el.classList.remove("active"));
     document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
+
     const navEl = document.querySelector(`.nav-item[data-view="${view}"]`);
     if (navEl) navEl.classList.add("active");
-    const botNavEl = document.querySelector(`.bottom-nav-item[data-view="${view}"]`);
-    if (botNavEl) botNavEl.classList.add("active");
+    const railEl = document.querySelector(`.side-rail-item[data-view="${view}"]`);
+    if (railEl) railEl.classList.add("active");
+
     document.getElementById(`view-${view}`).classList.add("active");
+
+    // Side rail: slide out when composing, slide back otherwise
+    const rail = document.querySelector(".side-rail");
+    const app  = document.querySelector(".app");
+    const isCompose = view === "compose";
+    if (rail) rail.classList.toggle("slide-out", isCompose);
+    if (app)  app.classList.toggle("compose-mode", isCompose);
+
     // Close mobile reading pane when leaving sent view
     if (view !== "sent") closeMobileReading();
-    // Hide FAB in compose (user already has ENVIAR button there)
-    const fab = document.querySelector(".fab");
-    if (fab) fab.classList.toggle("fab-hidden", view === "compose");
+
     if (view === "sent")      loadSentEmails();
     if (view === "scheduled") loadScheduledView();
     if (view === "dashboard") loadDashboard();
@@ -1765,12 +1787,14 @@
       const form = new FormData();
       form.append("to", to); form.append("subject", subject); form.append("message", message);
       selectedFiles.forEach(f => form.append("archivos", f));
+      if (replyToId) form.append("replyToId", replyToId);
 
       const res  = await fetch(`${WORKER_URL}/send`, { method: "POST", headers: HEADERS, body: form });
       const data = await res.json();
       if (!data.ok) throw new Error(data.error || "Error desconocido");
 
       showToast("Email enviado correctamente", "success");
+      replyToId = null;
       clearForm();
       const e = to.toLowerCase();
       if (!allContacts.includes(e)) allContacts.unshift(e);
@@ -1867,6 +1891,8 @@
     const b = document.getElementById("schedBadge");
     b.textContent = scheduledCount;
     b.classList.toggle("visible", scheduledCount > 0);
+    const dot = document.getElementById("schedDot");
+    if (dot) dot.classList.toggle("visible", scheduledCount > 0);
   }
 
   async function loadScheduledView() {
@@ -1927,6 +1953,7 @@
 
   // ── Enviados / Historial ────────────────────────────────────────────────────
   let sentEmailsData = [], currentEmailDetail = null, selectedMailId = null;
+  let replyToId = null;
   let currentMailFilter = 'all';
 
   async function loadSentEmails() {
@@ -1942,6 +1969,8 @@
       document.getElementById("sentMailCount").textContent = `${n} email${n !== 1 ? "s" : ""}`;
       const b = document.getElementById("sentBadge");
       b.textContent = n; b.classList.toggle("visible", n > 0);
+      const dot = document.getElementById("sentDot");
+      if (dot) dot.classList.toggle("visible", n > 0);
       // If we need to open a specific item from the dashboard
       if (_pendingOpenId) {
         const pid = _pendingOpenId;
@@ -2201,12 +2230,13 @@
     const sugerencia = document.getElementById("aiSuggestionText").value;
     const asunto = "Re: " + (currentEmailDetail.asunto || "");
     const dest   = (currentEmailDetail.destinatarios || [])[0] || "";
+    replyToId = currentEmailDetail.id;
     switchView("compose");
     document.getElementById("toInput").value      = dest;
     document.getElementById("subjectInput").value = asunto;
     document.getElementById("msgInput").value     = sugerencia;
     refreshPreview();
-    showToast("Respuesta cargada en Redactar ✓", "success");
+    showToast("Respuesta cargada — se marcará como respondido al enviar", "success");
   }
 
   // ── Mobile: cerrar reading pane ───────────────────────────────────────────
@@ -2220,6 +2250,7 @@
     document.getElementById("subjectInput").value = "";
     document.getElementById("msgInput").value = "";
     selectedFiles = []; renderChips(); _buildPreview();
+    replyToId = null;
   }
 
   // ── Init ─────────────────────────────────────────────────────────────────────
