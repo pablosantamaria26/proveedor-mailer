@@ -51,7 +51,8 @@ export default {
     }
 
     if (request.method === "POST" && url.pathname === "/gemini/sugerir-respuesta") return handleGeminiSugerirRespuesta(request, env);
-    if (request.method === "POST" && url.pathname === "/gemini/redactar")           return handleGeminiRedactar(request, env);
+    if (request.method === "POST" && url.pathname === "/gemini/redactar")          return handleGeminiRedactar(request, env);
+    if (request.method === "POST" && url.pathname === "/gemini/pulir")             return handleGeminiPulir(request, env);
     return new Response("Not found", { status: 404 });
   },
 
@@ -522,10 +523,13 @@ async function handleGeminiRedactar(request, env) {
   let body;
   try { body = await request.json(); } catch { return json({ ok: false, error: "JSON inválido" }, 400); }
 
-  const { intencion, destinatario, asunto } = body || {};
+  const { intencion, destinatario, asunto, tono = "formal", extension = "normal" } = body || {};
   if (!intencion) return json({ ok: false, error: "Falta intencion" }, 400);
 
-  const prompt = `Sos redactor de emails para Mercado Limpio, empresa distribuidora argentina. El usuario te describe lo que quiere comunicar. Redactá un email profesional en español argentino, formal-comercial. Devolvé un JSON válido con exactamente estos dos campos: "asunto" (string) y "cuerpo" (string con solo el cuerpo del mensaje, sin saludos iniciales ni firmas). No incluyas ningún texto fuera del JSON.\n\nIntención: ${intencion}${destinatario ? `\nDestinatario: ${destinatario}` : ""}${asunto ? `\nAsunto sugerido: ${asunto}` : ""}`;
+  const tonoDesc = { formal: "formal y profesional", informal: "informal pero respetuoso", amigable: "amigable y cercano" }[tono] || "formal y profesional";
+  const extDesc  = { breve: "muy breve (2-3 oraciones)", normal: "moderado (4-6 oraciones)", detallado: "completo y detallado (7-10 oraciones)" }[extension] || "moderado (4-6 oraciones)";
+
+  const prompt = `Sos redactor de emails para Mercado Limpio, empresa distribuidora argentina. Redactá un email en español argentino con tono ${tonoDesc} y extensión ${extDesc}. Devolvé un JSON con exactamente dos campos: "asunto" (string conciso) y "cuerpo" (string solo con el cuerpo, sin saludo inicial ni firma). No incluyas texto fuera del JSON.\n\nIntención: ${intencion}${destinatario ? `\nDestinatario: ${destinatario}` : ""}${asunto ? `\nAsunto sugerido: ${asunto}` : ""}`;
 
   const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`, {
     method: "POST",
@@ -554,6 +558,42 @@ async function handleGeminiRedactar(request, env) {
   catch { return json({ ok: false, error: "Gemini no devolvió JSON válido" }); }
 
   return json({ ok: true, cuerpo: (parsed.cuerpo || "").trim(), asunto: (parsed.asunto || asunto || "").trim() });
+}
+
+// ─────────────────────────────────────────────────────────────────
+// GEMINI — Pulir texto (corregir ortografía, gramática, conectores)
+// ─────────────────────────────────────────────────────────────────
+async function handleGeminiPulir(request, env) {
+  if (!env.GEMINI_API_KEY)
+    return json({ ok: false, error: "Gemini no configurado" }, 503);
+
+  let body;
+  try { body = await request.json(); } catch { return json({ ok: false, error: "JSON inválido" }, 400); }
+
+  const { texto } = body || {};
+  if (!texto?.trim()) return json({ ok: false, error: "Falta el texto a pulir" }, 400);
+
+  const prompt = `Sos un corrector profesional de textos en español argentino. Tu tarea es mejorar el siguiente texto de email corrigiendo ortografía, gramática, signos de puntuación y mejorando los conectores para que fluya mejor. No cambies el contenido ni el significado. No agregues ni quites ideas. Devolvé únicamente el texto corregido, sin explicaciones ni comentarios.\n\nTexto:\n${texto.trim()}`;
+
+  const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.3, maxOutputTokens: 1024, thinkingConfig: { thinkingBudget: 0 } }
+    })
+  });
+
+  if (!geminiRes.ok) {
+    const t = await geminiRes.text();
+    return json({ ok: false, error: `Gemini error ${geminiRes.status}: ${t}` });
+  }
+
+  const geminiData = await geminiRes.json();
+  const textoPulido = (geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || "").trim();
+  if (!textoPulido) return json({ ok: false, error: "Gemini no devolvió texto" });
+
+  return json({ ok: true, textoPulido });
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -603,8 +643,8 @@ function buildEmailHtml(message, subject, fromName, fromEmail, attachments = [])
   return `<!DOCTYPE html>
 <html lang="es">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escHtml(subject)}</title></head>
-<body style="margin:0;padding:0;background-color:#f0ede8;font-family:'Helvetica Neue',Arial,sans-serif">
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f0ede8;padding:48px 16px">
+<body style="margin:0;padding:0;background-color:#eef2f7;font-family:'Helvetica Neue',Arial,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#eef2f7;padding:48px 16px">
     <tr><td align="center">
       <table width="620" cellpadding="0" cellspacing="0" border="0" style="max-width:620px;background-color:#ffffff;box-shadow:0 4px 32px rgba(15,27,53,0.10)">
         <tr><td height="6" style="background:linear-gradient(90deg,#0f1b35 0%,#1e3a6e 100%);font-size:0">&nbsp;</td></tr>
@@ -620,7 +660,7 @@ function buildEmailHtml(message, subject, fromName, fromEmail, attachments = [])
           ${attachList}
         </td></tr>
         <tr><td height="1" style="background-color:#c9a558;font-size:0">&nbsp;</td></tr>
-        <tr><td style="padding:32px 52px;background-color:#faf8f5">
+        <tr><td style="padding:32px 52px;background-color:#f8fafc">
           <table width="100%" cellpadding="0" cellspacing="0" border="0">
             <tr>
               <td>

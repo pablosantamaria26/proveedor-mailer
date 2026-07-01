@@ -840,46 +840,122 @@
       cursor: pointer; transition: all .15s; letter-spacing: .3px;
     }
     .ai-toggle-btn:hover { background: #ede9fe; border-color: #a78bfa; }
-    .ai-compose-panel {
-      padding: 14px 24px; border-bottom: 1px solid var(--border);
-      background: #faf5ff; display: none; flex-direction: column; gap: 10px;
+    /* ══════════════════════════════════════════════
+       GEMINI MODAL
+    ══════════════════════════════════════════════ */
+    .gm-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(10,18,40,.55); backdrop-filter: blur(3px);
+      align-items: center; justify-content: center; padding: 16px;
     }
-    .ai-compose-panel.open { display: flex; animation: dropDown .14s ease; }
-    @keyframes dropDown { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
-    .ai-panel-label {
-      font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
-      text-transform: uppercase; color: #7c3aed;
+    .gm-overlay.open { display: flex; }
+    .gm-box {
+      background: var(--white); border-radius: var(--radius);
+      width: 100%; max-width: 520px; max-height: 90dvh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 20px 60px rgba(10,18,40,.25);
+      overflow: hidden;
     }
-    .ai-intent-textarea {
-      width: 100%; border: 1.5px solid #ddd6fe; border-radius: 8px;
-      padding: 10px 12px; font-size: 13px; font-family: inherit;
-      color: var(--navy); resize: none; height: 68px; outline: none;
-      background: var(--white); transition: border-color .15s;
+    .gm-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0;
     }
-    .ai-intent-textarea:focus  { border-color: #7c3aed; }
-    .ai-intent-textarea::placeholder { color: #b0a0d0; }
-    .ai-panel-actions { display: flex; gap: 8px; align-items: center; }
-    .btn-ai-generate {
+    .gm-title {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 700; color: var(--navy);
+    }
+    .gm-title-star { color: #7c3aed; font-size: 16px; }
+    .gm-close {
+      width: 28px; height: 28px; border-radius: 6px; border: none;
+      background: var(--bg); color: var(--muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: background .14s;
+    }
+    .gm-close:hover { background: var(--border); color: var(--text); }
+
+    /* Tabs */
+    .gm-tabs {
+      display: flex; gap: 0; padding: 0 20px;
+      border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--bg);
+    }
+    .gm-tab {
+      padding: 11px 16px; font-size: 12px; font-weight: 700;
+      color: var(--muted); border: none; background: none;
+      cursor: pointer; border-bottom: 2.5px solid transparent;
+      font-family: inherit; transition: color .14s, border-color .14s;
+      margin-bottom: -1px;
+    }
+    .gm-tab.active { color: #7c3aed; border-bottom-color: #7c3aed; }
+
+    /* Body */
+    .gm-body { padding: 18px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 14px; }
+    .gm-tab-pane { display: none; flex-direction: column; gap: 12px; }
+    .gm-tab-pane.active { display: flex; }
+    .gm-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    .gm-textarea {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 10px 12px; font-size: 13px; font-family: inherit; color: var(--navy);
+      resize: vertical; min-height: 80px; outline: none; background: var(--white);
+      transition: border-color .15s;
+    }
+    .gm-textarea:focus { border-color: #7c3aed; }
+    .gm-textarea::placeholder { color: #b0aac0; }
+    .gm-options { display: flex; gap: 10px; }
+    .gm-select {
+      flex: 1; padding: 8px 10px; font-size: 12px; font-family: inherit;
+      border: 1.5px solid var(--border); border-radius: 7px; background: var(--white);
+      color: var(--navy); outline: none; cursor: pointer;
+    }
+    .gm-select:focus { border-color: #7c3aed; }
+    .gm-select-label { font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+
+    /* Result */
+    .gm-result {
+      border: 1.5px solid #ddd6fe; border-radius: 8px; padding: 12px;
+      background: #faf5ff; display: none; flex-direction: column; gap: 8px;
+    }
+    .gm-result.visible { display: flex; }
+    .gm-result-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #7c3aed; }
+    .gm-result-text {
+      font-size: 13px; color: var(--navy); line-height: 1.6;
+      white-space: pre-wrap; max-height: 180px; overflow-y: auto;
+    }
+    .gm-result-asunto { font-size: 11px; color: var(--muted); font-style: italic; }
+
+    /* Footer */
+    .gm-footer {
+      display: flex; gap: 8px; padding: 14px 20px;
+      border-top: 1px solid var(--border); flex-shrink: 0;
+      justify-content: flex-end; align-items: center;
+    }
+    .gm-btn-cancel {
+      padding: 8px 14px; border: 1.5px solid var(--border); border-radius: 7px;
+      background: none; color: var(--muted); font-size: 12px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+    }
+    .gm-btn-gen {
       display: inline-flex; align-items: center; gap: 7px;
-      padding: 8px 16px; background: #7c3aed; color: var(--white);
-      border: none; border-radius: 6px; font-size: 12px; font-weight: 700;
+      padding: 8px 18px; background: #7c3aed; color: var(--white);
+      border: none; border-radius: 7px; font-size: 12px; font-weight: 700;
       font-family: inherit; cursor: pointer; transition: background .15s;
     }
-    .btn-ai-generate:hover:not(:disabled) { background: #6d28d9; }
-    .btn-ai-generate:disabled { opacity: .5; cursor: not-allowed; }
+    .gm-btn-gen:hover:not(:disabled) { background: #6d28d9; }
+    .gm-btn-gen:disabled { opacity: .5; cursor: not-allowed; }
+    .gm-btn-apply {
+      display: none; align-items: center; gap: 7px;
+      padding: 8px 18px; background: var(--navy); color: var(--white);
+      border: none; border-radius: 7px; font-size: 12px; font-weight: 700;
+      font-family: inherit; cursor: pointer; transition: background .15s;
+    }
+    .gm-btn-apply.visible { display: inline-flex; }
+    .gm-btn-apply:hover { background: var(--navy2); }
     .ai-spinner {
       width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.3);
       border-top-color: #fff; border-radius: 50%;
       animation: spin .7s linear infinite;
     }
-    .btn-ai-close {
-      padding: 8px 12px; border: 1.5px solid #ddd6fe; border-radius: 6px;
-      background: none; color: #7c3aed; font-size: 12px; font-weight: 600;
-      font-family: inherit; cursor: pointer; transition: background .15s;
-    }
-    .btn-ai-close:hover { background: #ede9fe; }
 
-    /* Reading pane AI */
+    /* Reading pane AI (sugerir respuesta) */
     .ai-reading-bar {
       padding: 10px 24px; border-bottom: 1px solid var(--border);
       background: #faf5ff; flex-shrink: 0;
@@ -919,6 +995,19 @@
       font-family: inherit; cursor: pointer; transition: background .15s;
     }
     .btn-apply-reply:hover { background: var(--navy2); }
+
+    /* Botón volver en compose (mobile) */
+    .compose-back-btn {
+      display: none;
+      align-items: center; gap: 6px;
+      padding: 8px 14px 8px 10px;
+      background: rgba(255,255,255,.08); border: none; border-radius: 7px;
+      color: var(--gold); font-size: 13px; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .compose-back-btn { display: flex; }
+    }
 
     /* ══════════════════════════════════════════════
        SIDE RAIL (solo mobile)
@@ -1135,6 +1224,12 @@
     <div id="view-compose" class="view">
       <aside class="compose-panel">
         <div class="compose-header">
+          <button class="compose-back-btn" onclick="switchView('dashboard')">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Volver
+          </button>
           <h2>Nuevo mensaje</h2>
           <p>El proveedor recibirá una comunicación oficial de Mercado Limpio</p>
         </div>
@@ -1153,24 +1248,12 @@
             placeholder="Pedido · Lista de precios · Consulta">
         </div>
 
-        <!-- IA: Redactar -->
+        <!-- IA: Redactar — abre modal -->
         <div class="ai-toggle-wrap">
-          <button class="ai-toggle-btn" onclick="toggleAIPanel()">
+          <button class="ai-toggle-btn" onclick="openGeminiModal()">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z"/></svg>
             Redactar con IA
           </button>
-        </div>
-        <div id="aiComposePanel" class="ai-compose-panel">
-          <span class="ai-panel-label">¿Qué querés transmitir?</span>
-          <textarea id="aiIntentionInput" class="ai-intent-textarea"
-            placeholder="Ej: Avisarle que el pago se procesó pero falta una factura del mes pasado…"></textarea>
-          <div class="ai-panel-actions">
-            <button id="aiGenerateBtn" class="btn-ai-generate" onclick="geminiRedactar()">
-              <span id="aiGenText">Generar email</span>
-              <div class="ai-spinner" id="aiGenSpinner" style="display:none"></div>
-            </button>
-            <button class="btn-ai-close" onclick="toggleAIPanel()">Cerrar</button>
-          </div>
         </div>
 
         <div class="field" style="border-bottom:none">
@@ -1386,6 +1469,79 @@
     <span class="side-rail-dot" id="schedDot"></span>
   </button>
 </nav>
+
+<!-- MODAL: Gemini IA -->
+<div class="gm-overlay" id="geminiModal" onclick="onGeminiOverlay(event)">
+  <div class="gm-box">
+    <div class="gm-header">
+      <div class="gm-title">
+        <span class="gm-title-star">✦</span> Asistente IA
+      </div>
+      <button class="gm-close" onclick="closeGeminiModal()">&#x2715;</button>
+    </div>
+
+    <div class="gm-tabs">
+      <button class="gm-tab active" id="gmTabRedactar" onclick="switchGmTab('redactar')">Redactar</button>
+      <button class="gm-tab" id="gmTabPulir" onclick="switchGmTab('pulir')">Pulir mi texto</button>
+    </div>
+
+    <div class="gm-body">
+      <!-- Tab: Redactar -->
+      <div class="gm-tab-pane active" id="gmPaneRedactar">
+        <div>
+          <div class="gm-label">¿Qué querés transmitir?</div>
+          <textarea class="gm-textarea" id="gmIntention" rows="3"
+            placeholder="Ej: Pedir la lista de precios actualizada para julio…"></textarea>
+        </div>
+        <div class="gm-options">
+          <div style="flex:1">
+            <div class="gm-select-label">Tono</div>
+            <select class="gm-select" id="gmTono">
+              <option value="formal">Formal</option>
+              <option value="informal">Informal</option>
+              <option value="amigable">Amigable</option>
+            </select>
+          </div>
+          <div style="flex:1">
+            <div class="gm-select-label">Longitud</div>
+            <select class="gm-select" id="gmExtension">
+              <option value="breve">Breve</option>
+              <option value="normal" selected>Normal</option>
+              <option value="detallado">Detallado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Pulir -->
+      <div class="gm-tab-pane" id="gmPanePulir">
+        <div>
+          <div class="gm-label">Escribí tu email — Gemini lo va a corregir</div>
+          <textarea class="gm-textarea" id="gmTexto" rows="6"
+            placeholder="Escribí acá tu email (aunque sea borrador) y Gemini va a corregir ortografía, gramática y mejorar los conectores…"></textarea>
+        </div>
+      </div>
+
+      <!-- Resultado -->
+      <div class="gm-result" id="gmResult">
+        <div class="gm-result-label">Resultado</div>
+        <div class="gm-result-asunto" id="gmResultAsunto" style="display:none"></div>
+        <div class="gm-result-text" id="gmResultText"></div>
+      </div>
+    </div>
+
+    <div class="gm-footer">
+      <button class="gm-btn-cancel" onclick="closeGeminiModal()">Cancelar</button>
+      <button class="gm-btn-gen" id="gmBtnGen" onclick="runGemini()">
+        <span id="gmBtnText">Generar</span>
+        <div class="ai-spinner" id="gmSpinner" style="display:none"></div>
+      </button>
+      <button class="gm-btn-apply" id="gmBtnApply" onclick="applyGeminiResult()">
+        Usar este texto &#x2192;
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL: Programar envío -->
 <div class="modal-overlay" id="scheduleModal" onclick="onOverlayClick(event,'scheduleModal')">
@@ -2149,46 +2305,108 @@
     URL.revokeObjectURL(url);
   }
 
-  // ── Gemini AI — Redactar desde intención ────────────────────────────────────
-  function toggleAIPanel() {
-    const panel = document.getElementById("aiComposePanel");
-    panel.classList.toggle("open");
-    if (panel.classList.contains("open"))
-      document.getElementById("aiIntentionInput").focus();
+  // ── Gemini Modal ─────────────────────────────────────────────────────────────
+  let _gmTab = "redactar";
+  let _gmResult = null; // { cuerpo, asunto } o { textoPulido }
+
+  function openGeminiModal() {
+    _gmResult = null;
+    document.getElementById("gmResult").classList.remove("visible");
+    document.getElementById("gmBtnApply").classList.remove("visible");
+    document.getElementById("geminiModal").classList.add("open");
+    setTimeout(() => document.getElementById("gmIntention").focus(), 80);
+  }
+  function closeGeminiModal() {
+    document.getElementById("geminiModal").classList.remove("open");
+  }
+  function onGeminiOverlay(e) {
+    if (e.target === document.getElementById("geminiModal")) closeGeminiModal();
+  }
+  function switchGmTab(tab) {
+    _gmTab = tab;
+    _gmResult = null;
+    document.getElementById("gmResult").classList.remove("visible");
+    document.getElementById("gmBtnApply").classList.remove("visible");
+    document.getElementById("gmPaneRedactar").classList.toggle("active", tab === "redactar");
+    document.getElementById("gmPanePulir").classList.toggle("active", tab === "pulir");
+    document.getElementById("gmTabRedactar").classList.toggle("active", tab === "redactar");
+    document.getElementById("gmTabPulir").classList.toggle("active", tab === "pulir");
+    document.getElementById("gmBtnText").textContent = tab === "pulir" ? "Pulir texto" : "Generar";
+    if (tab === "pulir") {
+      const current = document.getElementById("msgInput").value.trim();
+      if (current && !document.getElementById("gmTexto").value.trim())
+        document.getElementById("gmTexto").value = current;
+      document.getElementById("gmTexto").focus();
+    } else {
+      document.getElementById("gmIntention").focus();
+    }
   }
 
-  async function geminiRedactar() {
-    const intencion = (document.getElementById("aiIntentionInput").value || "").trim();
-    if (!intencion) { showToast("Describí lo que querés transmitir", "error"); return; }
-    const btn = document.getElementById("aiGenerateBtn");
+  async function runGemini() {
+    const btn = document.getElementById("gmBtnGen");
     btn.disabled = true;
-    document.getElementById("aiGenText").style.display = "none";
-    document.getElementById("aiGenSpinner").style.display = "inline-block";
+    document.getElementById("gmBtnText").style.display = "none";
+    document.getElementById("gmSpinner").style.display = "inline-block";
+    document.getElementById("gmResult").classList.remove("visible");
+    document.getElementById("gmBtnApply").classList.remove("visible");
+
     try {
-      const res = await fetch(`${WORKER_URL}/gemini/redactar`, {
-        method: "POST",
-        headers: { ...HEADERS, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          intencion,
-          destinatario: document.getElementById("toInput").value.trim(),
-          asunto: document.getElementById("subjectInput").value.trim()
-        })
-      });
-      const data = await res.json();
-      if (!data.ok) throw new Error(data.error || "Error de Gemini");
-      if (data.asunto) document.getElementById("subjectInput").value = data.asunto;
-      if (data.cuerpo) document.getElementById("msgInput").value = data.cuerpo;
-      refreshPreview();
-      document.getElementById("aiComposePanel").classList.remove("open");
-      document.getElementById("aiIntentionInput").value = "";
-      showToast("Email generado con IA ✨", "success");
+      let res, data;
+      if (_gmTab === "pulir") {
+        const texto = document.getElementById("gmTexto").value.trim();
+        if (!texto) { showToast("Escribí el texto a pulir", "error"); return; }
+        res  = await fetch(`${WORKER_URL}/gemini/pulir`, {
+          method: "POST", headers: { ...HEADERS, "Content-Type": "application/json" },
+          body: JSON.stringify({ texto })
+        });
+        data = await res.json();
+        if (!data.ok) throw new Error(data.error || "Error de Gemini");
+        _gmResult = { textoPulido: data.textoPulido };
+        document.getElementById("gmResultAsunto").style.display = "none";
+        document.getElementById("gmResultText").textContent = data.textoPulido;
+      } else {
+        const intencion = document.getElementById("gmIntention").value.trim();
+        if (!intencion) { showToast("Describí lo que querés transmitir", "error"); return; }
+        res  = await fetch(`${WORKER_URL}/gemini/redactar`, {
+          method: "POST", headers: { ...HEADERS, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            intencion,
+            tono:      document.getElementById("gmTono").value,
+            extension: document.getElementById("gmExtension").value,
+            destinatario: document.getElementById("toInput").value.trim(),
+            asunto:       document.getElementById("subjectInput").value.trim(),
+          })
+        });
+        data = await res.json();
+        if (!data.ok) throw new Error(data.error || "Error de Gemini");
+        _gmResult = { cuerpo: data.cuerpo, asunto: data.asunto };
+        const asuntoEl = document.getElementById("gmResultAsunto");
+        if (data.asunto) { asuntoEl.textContent = "Asunto: " + data.asunto; asuntoEl.style.display = "block"; }
+        else asuntoEl.style.display = "none";
+        document.getElementById("gmResultText").textContent = data.cuerpo;
+      }
+      document.getElementById("gmResult").classList.add("visible");
+      document.getElementById("gmBtnApply").classList.add("visible");
     } catch (err) {
-      showToast("No se pudo generar el email. Intentá de nuevo.", "error");
+      showToast("Error: " + err.message, "error");
     } finally {
       btn.disabled = false;
-      document.getElementById("aiGenText").style.display = "";
-      document.getElementById("aiGenSpinner").style.display = "none";
+      document.getElementById("gmBtnText").style.display = "";
+      document.getElementById("gmSpinner").style.display = "none";
     }
+  }
+
+  function applyGeminiResult() {
+    if (!_gmResult) return;
+    if (_gmResult.textoPulido) {
+      document.getElementById("msgInput").value = _gmResult.textoPulido;
+    } else {
+      if (_gmResult.asunto) document.getElementById("subjectInput").value = _gmResult.asunto;
+      if (_gmResult.cuerpo) document.getElementById("msgInput").value = _gmResult.cuerpo;
+    }
+    refreshPreview();
+    closeGeminiModal();
+    showToast("Texto aplicado al email ✓", "success");
   }
 
   // ── Gemini AI — Sugerir respuesta ────────────────────────────────────────────
@@ -2245,6 +2463,33 @@
     document.getElementById("mailReadingPane").classList.remove("mobile-open");
   }
 
+  // ── Draft persistence ────────────────────────────────────────────────────────
+  const DRAFT_KEY = "ml_mailer_draft";
+  function saveDraft() {
+    const d = {
+      to:      toInput.value,
+      subject: document.getElementById("subjectInput").value,
+      message: document.getElementById("msgInput").value
+    };
+    if (d.to || d.subject || d.message) localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+    else localStorage.removeItem(DRAFT_KEY);
+  }
+  function restoreDraft() {
+    try {
+      const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+      if (!d) return;
+      if (d.to)      toInput.value = d.to;
+      if (d.subject) document.getElementById("subjectInput").value = d.subject;
+      if (d.message) document.getElementById("msgInput").value = d.message;
+      if (d.to || d.subject || d.message) { refreshPreview(); showToast("Borrador restaurado ✓", "success"); }
+    } catch {}
+  }
+  function clearDraft() { localStorage.removeItem(DRAFT_KEY); }
+
+  // Wire draft autosave listeners
+  [toInput, document.getElementById("subjectInput"), document.getElementById("msgInput")]
+    .forEach(el => el.addEventListener("input", saveDraft));
+
   // ── Helpers ─────────────────────────────────────────────────────────────────
   function clearForm() {
     toInput.value = "";
@@ -2252,9 +2497,11 @@
     document.getElementById("msgInput").value = "";
     selectedFiles = []; renderChips(); _buildPreview();
     replyToId = null;
+    clearDraft();
   }
 
   // ── Init ─────────────────────────────────────────────────────────────────────
+  restoreDraft();
   initDashHeader();
   loadDashboard();
 
