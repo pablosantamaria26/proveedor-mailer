@@ -1,6 +1,13 @@
 // ================================================================
-// Mailer Proveedores — Cloudflare Worker v3.0.0
+// Mailer Proveedores — Cloudflare Worker v3.1.0
 // ================================================================
+
+// Devuelve la key de Supabase con mayor privilegio disponible.
+// SUPABASE_SERVICE_KEY (service_role) bypasea RLS — ideal para el worker.
+// Si no está seteada, cae al anon key (requiere políticas RLS permisivas).
+function supaKey(env) {
+  return env.SUPABASE_SERVICE_KEY || env.SUPABASE_ANON_KEY;
+}
 
 const CORS = {
   "Access-Control-Allow-Origin":  "*",
@@ -45,7 +52,6 @@ export default {
 
     if (request.method === "POST" && url.pathname === "/gemini/sugerir-respuesta") return handleGeminiSugerirRespuesta(request, env);
     if (request.method === "POST" && url.pathname === "/gemini/redactar")           return handleGeminiRedactar(request, env);
-
     return new Response("Not found", { status: 404 });
   },
 
@@ -270,6 +276,7 @@ async function saveEmailToSupabase(data, env) {
     return;
   }
 
+  const key = supaKey(env);
   const FROM_NAME  = env.FROM_NAME  || "Mercado Limpio";
   const FROM_EMAIL = env.FROM_EMAIL || "proveedores@mercadolimpio.ar";
   const attachments = data.attachments || [];
@@ -292,8 +299,8 @@ async function saveEmailToSupabase(data, env) {
     method: "POST",
     headers: {
       "Content-Type":  "application/json",
-      "apikey":        env.SUPABASE_ANON_KEY,
-      "Authorization": `Bearer ${env.SUPABASE_ANON_KEY}`,
+      "apikey":        key,
+      "Authorization": `Bearer ${key}`,
       "Prefer":        "return=minimal",
     },
     body: JSON.stringify(record),
@@ -310,8 +317,8 @@ async function saveEmailToSupabase(data, env) {
       method: "PATCH",
       headers: {
         "Content-Type":  "application/json",
-        "apikey":        env.SUPABASE_ANON_KEY,
-        "Authorization": `Bearer ${env.SUPABASE_ANON_KEY}`,
+        "apikey":        key,
+        "Authorization": `Bearer ${key}`,
         "Prefer":        "return=minimal",
       },
       body: JSON.stringify({ respondido: true, respondido_at: new Date().toISOString() })
@@ -326,6 +333,7 @@ async function handleHistorial(request, env) {
   if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY)
     return json({ ok: false, error: "Supabase no configurado" }, 503);
 
+  const key = supaKey(env);
   const url = new URL(request.url);
   const id  = url.searchParams.get("id");
   let supaUrl;
@@ -342,8 +350,8 @@ async function handleHistorial(request, env) {
 
   const res = await fetch(supaUrl, {
     headers: {
-      "apikey":        env.SUPABASE_ANON_KEY,
-      "Authorization": `Bearer ${env.SUPABASE_ANON_KEY}`,
+      "apikey":        key,
+      "Authorization": `Bearer ${key}`,
       "Accept":        "application/json",
     },
   });
@@ -366,10 +374,10 @@ async function handleDashboard(request, env) {
   if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY)
     return json({ ok: false, error: "Supabase no configurado" }, 503);
 
-  // Range: 0-0 junto a Prefer: count=exact garantiza que PostgREST devuelva Content-Range
+  const key = supaKey(env);
   const hdr = {
-    "apikey":        env.SUPABASE_ANON_KEY,
-    "Authorization": `Bearer ${env.SUPABASE_ANON_KEY}`,
+    "apikey":        key,
+    "Authorization": `Bearer ${key}`,
     "Prefer":        "count=exact",
     "Range":         "0-0",
   };
@@ -393,7 +401,7 @@ async function handleDashboard(request, env) {
     fetch(`${base}?select=id&respondido=eq.true`, { method: "HEAD", headers: hdr }),
     fetch(`${base}?select=id&tiene_adjuntos=eq.true`, { method: "HEAD", headers: hdr }),
     fetch(`${base}?select=id,destinatarios,asunto,tipo,enviado_at,respondido,tiene_adjuntos,estado_entrega&order=enviado_at.desc&limit=8`, {
-      headers: { "apikey": env.SUPABASE_ANON_KEY, "Authorization": `Bearer ${env.SUPABASE_ANON_KEY}`, "Accept": "application/json" }
+      headers: { "apikey": key, "Authorization": `Bearer ${key}`, "Accept": "application/json" }
     }),
   ]);
 
@@ -421,7 +429,8 @@ async function handleToggleRespondido(id, env) {
     return json({ ok: false, error: "Supabase no configurado" }, 503);
   if (!id) return json({ ok: false, error: "ID requerido" }, 400);
 
-  const hdr = { "apikey": env.SUPABASE_ANON_KEY, "Authorization": `Bearer ${env.SUPABASE_ANON_KEY}`, "Accept": "application/json" };
+  const key = supaKey(env);
+  const hdr = { "apikey": key, "Authorization": `Bearer ${key}`, "Accept": "application/json" };
   const getRes = await fetch(`${env.SUPABASE_URL}/rest/v1/emails_enviados?id=eq.${encodeURIComponent(id)}&select=respondido`, { headers: hdr });
   const [cur] = await getRes.json();
   if (!cur) return json({ ok: false, error: "No encontrado" }, 404);
@@ -449,12 +458,13 @@ async function handleResendWebhook(request, env) {
   if (!estado_entrega) return json({ ok: true });
 
   if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
+    const key = supaKey(env);
     await fetch(`${env.SUPABASE_URL}/rest/v1/emails_enviados?resend_id=eq.${encodeURIComponent(payload.data.email_id)}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        "apikey": env.SUPABASE_ANON_KEY,
-        "Authorization": `Bearer ${env.SUPABASE_ANON_KEY}`,
+        "apikey": key,
+        "Authorization": `Bearer ${key}`,
         "Prefer": "return=minimal"
       },
       body: JSON.stringify({ estado_entrega })
@@ -479,20 +489,27 @@ async function handleGeminiSugerirRespuesta(request, env) {
 
   const prompt = `Sos un asistente de una empresa distribuidora argentina llamada Mercado Limpio. Analizá el email enviado y sugerí una respuesta profesional, breve y clara, en español argentino de registro formal-comercial. Solo devolvé el cuerpo del email de respuesta, sin saludos iniciales ni firmas.\n\nAsunto: ${asunto}\nDestinatario: ${destinatario || "proveedor"}\nMensaje:\n${mensaje_texto}`;
 
-  const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${env.GEMINI_API_KEY}`, {
+  const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 800 } })
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 800,
+        thinkingConfig: { thinkingBudget: 0 },
+      }
+    })
   });
 
   if (!geminiRes.ok) {
     const t = await geminiRes.text();
-    return json({ ok: false, error: `Gemini ${geminiRes.status}: ${t}` }, geminiRes.status);
+    return json({ ok: false, error: `Gemini error ${geminiRes.status}: ${t}` });
   }
 
   const geminiData = await geminiRes.json();
-  const sugerencia = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-  return json({ ok: true, sugerencia: sugerencia.trim(), asunto_respuesta: `Re: ${asunto}` });
+  const sugerencia = (geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || "").trim();
+  return json({ ok: true, sugerencia, asunto_respuesta: `Re: ${asunto}` });
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -510,29 +527,31 @@ async function handleGeminiRedactar(request, env) {
 
   const prompt = `Sos redactor de emails para Mercado Limpio, empresa distribuidora argentina. El usuario te describe lo que quiere comunicar. Redactá un email profesional en español argentino, formal-comercial. Devolvé un JSON válido con exactamente estos dos campos: "asunto" (string) y "cuerpo" (string con solo el cuerpo del mensaje, sin saludos iniciales ni firmas). No incluyas ningún texto fuera del JSON.\n\nIntención: ${intencion}${destinatario ? `\nDestinatario: ${destinatario}` : ""}${asunto ? `\nAsunto sugerido: ${asunto}` : ""}`;
 
-  const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${env.GEMINI_API_KEY}`, {
+  const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 800 } })
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 1024,
+        responseMimeType: "application/json",
+        thinkingConfig: { thinkingBudget: 0 },
+      }
+    })
   });
 
   if (!geminiRes.ok) {
     const t = await geminiRes.text();
-    return json({ ok: false, error: `Gemini ${geminiRes.status}: ${t}` }, geminiRes.status);
+    return json({ ok: false, error: `Gemini error ${geminiRes.status}: ${t}` });
   }
 
   const geminiData = await geminiRes.json();
-  let rawText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-
-  // Strip markdown code blocks que Gemini a veces agrega (```json ... ```)
-  rawText = rawText.replace(/```json\s*/gi, "").replace(/```\s*/g, "").trim();
-
-  const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) return json({ ok: false, error: "Gemini no devolvió JSON válido" }, 500);
+  const rawText = (geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || "").trim();
 
   let parsed;
-  try { parsed = JSON.parse(jsonMatch[0]); }
-  catch { return json({ ok: false, error: "Error al parsear respuesta de Gemini" }, 500); }
+  try { parsed = JSON.parse(rawText); }
+  catch { return json({ ok: false, error: "Gemini no devolvió JSON válido" }); }
 
   return json({ ok: true, cuerpo: (parsed.cuerpo || "").trim(), asunto: (parsed.asunto || asunto || "").trim() });
 }
