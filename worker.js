@@ -49,6 +49,9 @@ export default {
     if (request.method === "PATCH" && url.pathname.startsWith("/historial/")) {
       return handleToggleRespondido(url.pathname.slice("/historial/".length), env);
     }
+    if (request.method === "DELETE" && url.pathname.startsWith("/historial/")) {
+      return handleDeleteEmail(url.pathname.slice("/historial/".length), env);
+    }
 
     if (request.method === "POST" && url.pathname === "/gemini/sugerir-respuesta") return handleGeminiSugerirRespuesta(request, env);
     if (request.method === "POST" && url.pathname === "/gemini/redactar")          return handleGeminiRedactar(request, env);
@@ -445,6 +448,26 @@ async function handleToggleRespondido(id, env) {
 
   if (!upd.ok) { const t = await upd.text(); return json({ ok: false, error: t }, upd.status); }
   return json({ ok: true, respondido: newState });
+}
+
+// ─────────────────────────────────────────────────────────────────
+// ELIMINAR EMAIL DEL HISTORIAL
+// ─────────────────────────────────────────────────────────────────
+async function handleDeleteEmail(id, env) {
+  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY)
+    return json({ ok: false, error: "Supabase no configurado" }, 503);
+  if (!id) return json({ ok: false, error: "ID requerido" }, 400);
+
+  const key = supaKey(env);
+  const res = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/emails_enviados?id=eq.${encodeURIComponent(id)}`,
+    {
+      method: "DELETE",
+      headers: { "apikey": key, "Authorization": `Bearer ${key}`, "Content-Type": "application/json" }
+    }
+  );
+  if (!res.ok) { const t = await res.text(); return json({ ok: false, error: `Error ${res.status}: ${t}` }); }
+  return json({ ok: true });
 }
 
 // ─────────────────────────────────────────────────────────────────
