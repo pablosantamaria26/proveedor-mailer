@@ -689,19 +689,62 @@
     }
     .btn-delete-email:hover { border-color: var(--danger); color: var(--danger); background: #fef2f2; }
 
+    .btn-forward {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--muted);
+      transition: border-color .15s, color .15s, background .15s;
+    }
+    .btn-forward:hover { border-color: var(--primary); color: var(--primary); background: #eff6ff; }
+
     .bounce-banner {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 10px;
-      padding: 10px 16px;
+      padding: 14px 16px;
       background: #fff7ed;
-      border: 1px solid #fed7aa;
+      border: 1.5px solid #fed7aa;
       border-radius: 10px;
-      margin: 12px 16px 0;
+      margin: 12px 0 0;
       font-size: 12px;
-      color: #c2410c;
-      font-weight: 600;
+      color: #92400e;
     }
+    .bounce-banner-title {
+      display: flex; align-items: center; gap: 7px;
+      font-weight: 700; font-size: 13px; color: #c2410c;
+    }
+    .bounce-banner-sub { color: #78350f; line-height: 1.5; }
+    .bounce-banner-hint {
+      font-size: 11px; color: #a16207;
+      background: #fef3c7; border: 1px solid #fde68a;
+      border-radius: 6px; padding: 4px 9px; display: inline-block;
+    }
+    .btn-retry {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: #ea580c;
+      color: #fff;
+      transition: background .15s;
+    }
+    .btn-retry:hover { background: #c2410c; }
 
     .reading-attachments {
       padding: 9px 24px; background: var(--cream2); border-bottom: 1px solid var(--border);
@@ -2257,6 +2300,8 @@
       const dests = (email.destinatarios || []).join(", ");
       const isResp = !!email.respondido;
 
+      const isBounced = email.estado_entrega === "rebotado";
+
       document.getElementById("readingHeader").innerHTML = `
         <div class="reading-subject">${esc(email.asunto)}</div>
         <div class="reading-meta">
@@ -2272,13 +2317,36 @@
               : `<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Marcar como respondido`
             }
           </button>
+          <button class="btn-forward" onclick="forwardEmail()">
+            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 9l3 3-3 3m0-3H5m6-7h7a2 2 0 012 2v14a2 2 0 01-2 2h-7"/>
+            </svg>
+            Reenviar
+          </button>
           <button class="btn-delete-email" onclick="deleteEmail('${esc(email.id)}')">
             <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <polyline points="3 6 5 6 21 6"/><path stroke-linecap="round" stroke-linejoin="round" d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/>
             </svg>
             Eliminar
           </button>
-        </div>`;
+        </div>
+        ${isBounced ? `
+        <div class="bounce-banner">
+          <div class="bounce-banner-title">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+            Email rebotado — no pudo entregarse
+          </div>
+          <div class="bounce-banner-sub">La dirección <strong>${esc(dests)}</strong> puede no existir o estar incorrecta. Podés reintentar con otra dirección usando el contenido original.</div>
+          <button class="btn-retry" onclick="retryBounced()">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            Reintentar con otra dirección
+          </button>
+        </div>` : ""}
+      `;
 
       const adjData = email.adjuntos_data || [], adjMeta = email.adjuntos_meta || [];
       if (adjData.length) {
@@ -2337,6 +2405,33 @@
       btn.classList.remove("loading");
       btn.disabled = false;
     }
+  }
+
+  function _prefillCompose(email, clearTo) {
+    document.getElementById("subjectInput").value = email.asunto || "";
+    document.getElementById("msgInput").value     = email.mensaje_texto || "";
+    toInput.value = clearTo ? "" : (email.destinatarios || []).join(", ");
+    selectedFiles = []; renderChips();
+    refreshPreview();
+    switchView("compose");
+    if (clearTo) {
+      toInput.focus();
+    } else {
+      toInput.select();
+    }
+  }
+
+  function retryBounced() {
+    if (!currentEmailDetail) return;
+    const failedAddr = (currentEmailDetail.destinatarios || []).join(", ");
+    _prefillCompose(currentEmailDetail, true);
+    showToast(`Dirección que falló: ${failedAddr}`, "error");
+  }
+
+  function forwardEmail() {
+    if (!currentEmailDetail) return;
+    _prefillCompose(currentEmailDetail, false);
+    showToast("Email listo — modificá el destinatario si es necesario", "success");
   }
 
   async function deleteEmail(id) {
