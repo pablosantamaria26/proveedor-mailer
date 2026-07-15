@@ -20,49 +20,57 @@ export default {
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: CORS });
     }
-
-    const url = new URL(request.url);
-
-    // Webhook de Resend: sin autenticación (Resend no envía X-Mailer-Secret)
-    if (request.method === "POST" && url.pathname === "/webhook/resend") {
-      return handleResendWebhook(request, env);
+    try {
+      return await handleRequest(request, env, ctx);
+    } catch (err) {
+      console.error("[Worker unhandled error]", err?.message || err);
+      return json({ ok: false, error: `Error interno: ${err?.message || "desconocido"}` }, 500);
     }
-
-    // Todas las demás rutas requieren el secret
-    if (env.MAILER_SECRET) {
-      const sent = request.headers.get("X-Mailer-Secret") || "";
-      if (sent !== env.MAILER_SECRET) {
-        return json({ ok: false, error: "No autorizado" }, 401);
-      }
-    }
-
-    if (request.method === "GET"  && url.pathname === "/contacts")   return json(await getContacts(env));
-    if (request.method === "POST" && url.pathname === "/send")        return handleSend(request, env, ctx);
-    if (request.method === "POST" && url.pathname === "/schedule")    return handleSchedule(request, env);
-    if (request.method === "GET"  && url.pathname === "/scheduled")   return handleListScheduled(env);
-    if (request.method === "GET"  && url.pathname === "/historial")   return handleHistorial(request, env);
-    if (request.method === "GET"  && url.pathname === "/dashboard")   return handleDashboard(request, env);
-
-    if (request.method === "DELETE" && url.pathname.startsWith("/scheduled/")) {
-      return handleCancelScheduled(url.pathname.slice("/scheduled/".length), env);
-    }
-    if (request.method === "PATCH" && url.pathname.startsWith("/historial/")) {
-      return handleToggleRespondido(url.pathname.slice("/historial/".length), env);
-    }
-    if (request.method === "DELETE" && url.pathname.startsWith("/historial/")) {
-      return handleDeleteEmail(url.pathname.slice("/historial/".length), env);
-    }
-
-    if (request.method === "POST" && url.pathname === "/gemini/sugerir-respuesta") return handleGeminiSugerirRespuesta(request, env);
-    if (request.method === "POST" && url.pathname === "/gemini/redactar")          return handleGeminiRedactar(request, env);
-    if (request.method === "POST" && url.pathname === "/gemini/pulir")             return handleGeminiPulir(request, env);
-    return new Response("Not found", { status: 404 });
   },
 
   async scheduled(_event, env, ctx) {
     ctx.waitUntil(processScheduledEmails(env));
   }
 };
+
+async function handleRequest(request, env, ctx) {
+  const url = new URL(request.url);
+
+  // Webhook de Resend: sin autenticación (Resend no envía X-Mailer-Secret)
+  if (request.method === "POST" && url.pathname === "/webhook/resend") {
+    return handleResendWebhook(request, env);
+  }
+
+  // Todas las demás rutas requieren el secret
+  if (env.MAILER_SECRET) {
+    const sent = request.headers.get("X-Mailer-Secret") || "";
+    if (sent !== env.MAILER_SECRET) {
+      return json({ ok: false, error: "No autorizado" }, 401);
+    }
+  }
+
+  if (request.method === "GET"  && url.pathname === "/contacts")   return json(await getContacts(env));
+  if (request.method === "POST" && url.pathname === "/send")        return handleSend(request, env, ctx);
+  if (request.method === "POST" && url.pathname === "/schedule")    return handleSchedule(request, env);
+  if (request.method === "GET"  && url.pathname === "/scheduled")   return handleListScheduled(env);
+  if (request.method === "GET"  && url.pathname === "/historial")   return handleHistorial(request, env);
+  if (request.method === "GET"  && url.pathname === "/dashboard")   return handleDashboard(request, env);
+
+  if (request.method === "DELETE" && url.pathname.startsWith("/scheduled/")) {
+    return handleCancelScheduled(url.pathname.slice("/scheduled/".length), env);
+  }
+  if (request.method === "PATCH" && url.pathname.startsWith("/historial/")) {
+    return handleToggleRespondido(url.pathname.slice("/historial/".length), env);
+  }
+  if (request.method === "DELETE" && url.pathname.startsWith("/historial/")) {
+    return handleDeleteEmail(url.pathname.slice("/historial/".length), env);
+  }
+
+  if (request.method === "POST" && url.pathname === "/gemini/sugerir-respuesta") return handleGeminiSugerirRespuesta(request, env);
+  if (request.method === "POST" && url.pathname === "/gemini/redactar")          return handleGeminiRedactar(request, env);
+  if (request.method === "POST" && url.pathname === "/gemini/pulir")             return handleGeminiPulir(request, env);
+  return new Response("Not found", { status: 404, headers: CORS });
+}
 
 // ─────────────────────────────────────────────────────────────────
 // ENVÍO INMEDIATO
