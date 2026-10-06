@@ -28,8 +28,12 @@ export default {
     }
   },
 
-  async scheduled(_event, env, ctx) {
+  async scheduled(event, env, ctx) {
     ctx.waitUntil(processScheduledEmails(env));
+    const at = new Date(event.scheduledTime);
+    if (at.getUTCHours() === 12 && at.getUTCMinutes() === 0 && Math.floor(event.scheduledTime / 86400000) % 3 === 0) {
+      ctx.waitUntil(pingSupabase(env));
+    }
   }
 };
 
@@ -54,6 +58,7 @@ async function handleRequest(request, env, ctx) {
   if (request.method === "POST" && url.pathname === "/schedule")    return handleSchedule(request, env);
   if (request.method === "GET"  && url.pathname === "/scheduled")   return handleListScheduled(env);
   if (request.method === "GET"  && url.pathname === "/historial")   return handleHistorial(request, env);
+  if (request.method === "GET"  && url.pathname === "/keepalive")   return json(await pingSupabase(env));
   if (request.method === "GET"  && url.pathname === "/dashboard")   return handleDashboard(request, env);
 
   if (request.method === "DELETE" && url.pathname.startsWith("/scheduled/")) {
@@ -639,6 +644,15 @@ async function parseAttachments(formData) {
     result.push({ filename: f.name, content: arrayBufferToBase64(buf), size: buf.byteLength });
   }
   return result;
+}
+
+async function pingSupabase(env) {
+  const key = supaKey(env);
+  if (!env.SUPABASE_URL || !key) return { ok: false, error: "Supabase no configurado" };
+  const res = await fetch(`${env.SUPABASE_URL}/rest/v1/emails_enviados?select=id&limit=1`, {
+    headers: { apikey: key, Authorization: `Bearer ${key}` },
+  });
+  return { ok: res.ok, status: res.status };
 }
 
 function json(data, status = 200) {

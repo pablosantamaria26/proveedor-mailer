@@ -1947,6 +1947,7 @@
 
   fetch(`${WORKER_URL}/contacts`, { headers: HEADERS })
     .then(r => r.json()).then(d => { allContacts = Array.isArray(d) ? d : []; }).catch(() => {});
+  fetch(`${WORKER_URL}/keepalive`, { headers: HEADERS }).catch(() => {});
 
   const toInput = document.getElementById("toInput");
   const acList  = document.getElementById("acList");
